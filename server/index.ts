@@ -15,7 +15,8 @@ app.use(cors({
 }))
 app.use(express.json())
 
-const PORT = process.env.PORT || 3001
+const port = Number(process.env.PORT ?? 3001)
+const host = "0.0.0.0"
 
 // Simple in-memory rate limiting map: IP -> { count, resetTime }
 const rateLimitMap = new Map<string, { count: number, resetTime: number }>()
@@ -64,6 +65,10 @@ const aiProvider = new ProductionAIProvider()
 indexer.loadIndex().catch((err: any) => {
   console.error("Failed to load index on startup:", err.message)
   process.exit(1) // Fail fast if index is missing/corrupted
+})
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" })
 })
 
 app.post("/api/ai/ask", rateLimiter, async (req, res) => {
@@ -135,6 +140,6 @@ app.post("/api/ai/ask", rateLimiter, async (req, res) => {
   }
 })
 
-app.listen(PORT, () => {
-  console.log(`Portfolio API Server listening on port ${PORT}`)
+app.listen(port, host, () => {
+  console.log(`Portfolio API listening on ${host}:${port}`)
 })
