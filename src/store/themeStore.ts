@@ -14,7 +14,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      colorMode: 'system',
+      colorMode: 'dark',
       portfolioTheme: 'premium-editorial',
       setColorMode: (colorMode) => set({ colorMode }),
       setPortfolioTheme: (portfolioTheme) => set({ portfolioTheme }),

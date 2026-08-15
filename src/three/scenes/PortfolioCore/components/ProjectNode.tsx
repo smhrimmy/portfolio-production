@@ -3,7 +3,8 @@ import { useFrame } from "@react-three/fiber"
 import { useCursor } from "@react-three/drei"
 import { useNavigate } from "react-router-dom"
 import * as THREE from "three"
-import { useThemeStore } from "../../../../store/themeStore"
+import { getSceneColors } from "../../../../design-system/colors"
+import { useResolvedColorMode } from "../../../hooks/useResolvedColorMode"
 
 interface ProjectNodeProps {
   id: string
@@ -18,39 +19,52 @@ export function ProjectNode({ slug, position, phaseOffset }: ProjectNodeProps) {
   const navigate = useNavigate()
   const group = useRef<THREE.Group>(null)
   const mesh = useRef<THREE.Mesh>(null)
-  
+  const glow = useRef<THREE.Mesh>(null)
+
   const [hovered, setHovered] = useState(false)
   useCursor(hovered)
-  
-  const { portfolioTheme, colorMode } = useThemeStore()
-  const isDark = colorMode === "dark"
-  const primaryColor = isDark ? "#ffffff" : "#000000"
-  const accentColor = portfolioTheme === "cyberpunk" ? "#ff00ff" : "#4f46e5"
 
+  const isDark = useResolvedColorMode()
+  const colors = getSceneColors(isDark)
   const baseY = position[1]
 
   useFrame((state, delta) => {
     if (!group.current || !mesh.current) return
 
-    // Subtle floating
-    group.current.position.y = baseY + Math.sin(state.clock.elapsedTime * 1.2 + phaseOffset) * 0.04
+    group.current.position.y = baseY + Math.sin(state.clock.elapsedTime * 0.9 + phaseOffset) * 0.035
 
-    // Hover scale interpolation
-    const targetScale = hovered ? 1.4 : 1
-    mesh.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 1 - Math.exp(-8 * delta))
+    const targetScale = hovered ? 1.5 : 1
+    mesh.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 1 - Math.exp(-10 * delta))
+
+    if (glow.current) {
+      const glowScale = hovered ? 2.2 : 1.4
+      glow.current.scale.lerp(new THREE.Vector3(glowScale, glowScale, glowScale), 1 - Math.exp(-8 * delta))
+      const mat = glow.current.material as THREE.MeshBasicMaterial
+      mat.opacity = THREE.MathUtils.lerp(mat.opacity, hovered ? 0.35 : 0.12, 0.1)
+    }
   })
 
   return (
-    <group 
-      ref={group} 
+    <group
+      ref={group}
       position={position}
-      onPointerOver={(e) => { e.stopPropagation(); setHovered(true) }}
+      onPointerOver={(e) => {
+        e.stopPropagation()
+        setHovered(true)
+      }}
       onPointerOut={() => setHovered(false)}
-      onClick={(e) => { e.stopPropagation(); navigate(`/projects/${slug}`) }}
+      onClick={(e) => {
+        e.stopPropagation()
+        navigate(`/projects/${slug}`)
+      }}
     >
+      <mesh ref={glow} scale={1.4}>
+        <sphereGeometry args={[0.12, 12, 12]} />
+        <meshBasicMaterial color={colors.emissive} transparent opacity={0.12} depthWrite={false} />
+      </mesh>
       <mesh ref={mesh}>
-        <sphereGeometry args={[0.12, 16, 16]} />
-        <meshBasicMaterial color={hovered ? accentColor : primaryColor} />
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshBasicMaterial color={hovered ? colors.nodeHover : colors.nodeIdle} />
       </mesh>
     </group>
   )

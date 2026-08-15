@@ -1,26 +1,28 @@
 import { useMemo } from "react"
 import { Points, PointMaterial } from "@react-three/drei"
-import { useThemeStore } from "../../../../store/themeStore"
+import { getSceneColors } from "../../../../design-system/colors"
+import { useResolvedColorMode } from "../../../hooks/useResolvedColorMode"
 import { useThreeStore } from "../../../store/useThreeStore"
 import { prefersReducedMotion } from "../../../core/DeviceCapability"
 
 export function ParticleField() {
-  const { colorMode } = useThemeStore()
+  const isDark = useResolvedColorMode()
+  const colors = getSceneColors(isDark)
   const { getEffectiveTier } = useThreeStore()
   const tier = getEffectiveTier()
   const isReducedMotion = prefersReducedMotion()
 
-  const isDark = colorMode === "dark"
-  const particleColor = isDark ? "#ffffff" : "#000000"
-
-  const particleCount = tier === "HIGH" ? 1800 : tier === "BALANCED" ? 900 : tier === "LOW" ? 300 : 0
+  const particleCount = tier === "HIGH" ? 1200 : tier === "BALANCED" ? 600 : tier === "LOW" ? 200 : 0
 
   const positions = useMemo(() => {
     const p = new Float32Array(particleCount * 3)
     for (let i = 0; i < particleCount; i++) {
-      p[i * 3] = (Math.random() - 0.5) * 15
-      p[i * 3 + 1] = (Math.random() - 0.5) * 15
-      p[i * 3 + 2] = (Math.random() - 0.5) * 15
+      const radius = 2 + Math.random() * 6
+      const theta = Math.random() * Math.PI * 2
+      const phi = Math.acos(2 * Math.random() - 1)
+      p[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
+      p[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
+      p[i * 3 + 2] = radius * Math.cos(phi)
     }
     return p
   }, [particleCount])
@@ -29,13 +31,13 @@ export function ParticleField() {
 
   return (
     <Points positions={positions} stride={3}>
-      <PointMaterial 
-        transparent 
-        color={particleColor} 
-        size={0.025} 
-        sizeAttenuation={true} 
+      <PointMaterial
+        transparent
+        color={colors.particle}
+        size={0.02}
+        sizeAttenuation
         depthWrite={false}
-        opacity={isDark ? 0.25 : 0.15}
+        opacity={isDark ? 0.35 : 0.2}
       />
     </Points>
   )
