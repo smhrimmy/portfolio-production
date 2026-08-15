@@ -1,0 +1,18 @@
+[
+  {
+    "query": "React projects",
+    "expectedDocuments": ["proj_1"]
+  },
+  {
+    "query": "Senior frontend experience",
+    "expectedDocuments": ["exp_1"]
+  },
+  {
+    "query": "xyzabc123 impossible query",
+    "expectedDocuments": []
+  },
+  {
+    "query": "Portfolio OS",
+    "expectedDocuments": ["proj_1"]
+  }
+]
