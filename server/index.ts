@@ -68,7 +68,10 @@ indexer.loadIndex().catch((err: any) => {
 })
 
 app.get("/health", (_req, res) => {
-  res.status(200).json({ status: "ok" })
+  res.status(200).json({
+    status: "ok",
+    ai: Boolean(process.env.OPENAI_API_KEY),
+  })
 })
 
 app.post("/api/ai/ask", rateLimiter, async (req, res) => {

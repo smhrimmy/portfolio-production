@@ -7,12 +7,17 @@ export interface AIChunk {
 }
 
 export class ProductionAIProvider {
-  private openai: OpenAI
+  private openai: OpenAI | null = null
 
-  constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    })
+  private getClient(): OpenAI {
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      throw new Error("OPENAI_API_KEY is not configured")
+    }
+    if (!this.openai) {
+      this.openai = new OpenAI({ apiKey })
+    }
+    return this.openai
   }
 
   async *stream(query: string, context: IndexedDocument[], options?: { signal?: AbortSignal }): AsyncIterable<AIChunk> {
@@ -38,7 +43,7 @@ ${contextString}
 
     // 4. Stream Response
     try {
-      const completion = await this.openai.chat.completions.create({
+      const completion = await this.getClient().chat.completions.create({
         model: "gpt-4o-mini", // Use small model for speed/cost
         messages: [
           { role: "system", content: systemPrompt },
