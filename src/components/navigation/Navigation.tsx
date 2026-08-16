@@ -1,8 +1,20 @@
-import { Link } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useLocation } from "react-router-dom"
 import { Search } from "lucide-react"
 import { useSearchStore } from "../../hooks/useSearch"
+import { getNavigationItems, type NavigationItem } from "../../data/navigation"
+import { getSiteSettings, type SiteSettings } from "../../data/settings"
 
 export function Navigation() {
+  const [navItems, setNavItems] = useState<NavigationItem[]>([])
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+  const location = useLocation()
+
+  useEffect(() => {
+    getNavigationItems("header").then(setNavItems)
+    getSiteSettings().then(setSettings)
+  }, [])
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
@@ -10,10 +22,33 @@ export function Navigation() {
           <span className="font-display font-bold">PORTFOLIO OS</span>
         </Link>
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <Link to="/projects" className="transition-colors hover:text-foreground/80 text-foreground/60">WORK</Link>
-          <Link to="/experience" className="transition-colors hover:text-foreground/80 text-foreground/60">EXPERIENCE</Link>
-          <Link to="/writing" className="transition-colors hover:text-foreground/80 text-foreground/60">WRITING</Link>
-          <Link to="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">ABOUT</Link>
+          {navItems.map((item) => {
+            const isActive = location.pathname.startsWith(item.path) && item.path !== "/"
+              || (location.pathname === "/" && item.path === "/")
+            
+            if (item.isExternal) {
+              return (
+                <a 
+                  key={item.id} 
+                  href={item.path} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className={`transition-colors hover:text-foreground/80 ${isActive ? 'text-foreground' : 'text-foreground/60 uppercase'}`}
+                >
+                  {item.label}
+                </a>
+              )
+            }
+            return (
+              <Link 
+                key={item.id} 
+                to={item.path} 
+                className={`transition-colors hover:text-foreground/80 ${isActive ? 'text-foreground' : 'text-foreground/60 uppercase'}`}
+              >
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
         <div className="flex items-center space-x-4">
           <button 
@@ -26,8 +61,15 @@ export function Navigation() {
               <span className="text-xs">⌘</span>K
             </kbd>
           </button>
-          <Link to="/resume" className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 hidden md:block">RESUME</Link>
-          <Link to="/contact" className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 hidden md:block">CONTACT</Link>
+          {settings && (
+            <>
+              {settings.resumeCtaLink ? (
+                <a href={settings.resumeCtaLink} target="_blank" rel="noopener noreferrer" className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 hidden md:block uppercase">{settings.resumeCtaText}</a>
+              ) : (
+                <Link to="/resume" className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60 hidden md:block uppercase">{settings.resumeCtaText}</Link>
+              )}
+            </>
+          )}
         </div>
       </div>
     </header>

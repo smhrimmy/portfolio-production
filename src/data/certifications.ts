@@ -1,47 +1,35 @@
-import type { Certification } from "../types/certification"
 
-export const certificationsData: Certification[] = [
-  {
-    id: "cert_1",
-    name: "AWS Certified Solutions Architect – Associate",
-    issuer: "Amazon Web Services",
-    issueDate: "2024-01-15",
-    expiryDate: "2027-01-15",
-    credentialId: "AWS-12345678",
-    credentialUrl: "https://aws.amazon.com/certification",
-    category: "Cloud",
-    skills: ["Cloud Architecture", "AWS", "Infrastructure"],
-    featured: true,
-    order: 1,
-    status: "active"
-  },
-  {
-    id: "cert_2",
-    name: "Google Professional Cloud Developer",
-    issuer: "Google Cloud",
-    issueDate: "2023-06-10",
-    credentialId: "GCP-87654321",
-    credentialUrl: "https://cloud.google.com/certification",
-    category: "Cloud",
-    skills: ["GCP", "Cloud Native", "Kubernetes"],
-    featured: false,
-    order: 2,
-    status: "active"
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001"
+
+export async function getCertifications(): Promise<any[]> {
+  try {
+    const res = await fetch(`${API_URL}/api/public/certifications`)
+    if (!res.ok) return []
+    const certs = await res.json()
+    // Parse skills from JSON string if needed
+    return certs.map((c: any) => ({
+      ...c,
+      skills: c.skills ? JSON.parse(c.skills) : [],
+      expiryDate: c.expirationDate,
+      credentialUrl: c.url
+    }))
+  } catch (err) {
+    console.error("Failed to fetch certifications", err)
+    return []
   }
-]
-
-export async function getCertifications(): Promise<Certification[]> {
-  await new Promise(resolve => setTimeout(resolve, 300))
-  return [...certificationsData].sort((a, b) => a.order - b.order)
 }
 
-export async function getFeaturedCertifications(): Promise<Certification[]> {
-  await new Promise(resolve => setTimeout(resolve, 300))
-  return certificationsData.filter(c => c.featured).sort((a, b) => a.order - b.order)
+export async function getFeaturedCertifications(): Promise<any[]> {
+  try {
+    const certs = await getCertifications()
+    return certs.slice(0, 4) // No featured flag on Prisma model, take first 4
+  } catch (err) {
+    return []
+  }
 }
 
 export async function getCertificationCategories(): Promise<string[]> {
-  await new Promise(resolve => setTimeout(resolve, 100))
-  const categories = new Set(certificationsData.map(c => c.category).filter(Boolean) as string[])
-  return Array.from(categories)
+  // Not strictly stored in Prisma right now, but we can extract if we add category later
+  return []
 }

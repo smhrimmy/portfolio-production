@@ -1,4 +1,5 @@
-import type { Profile } from "../types/profile"
+/// <reference types="vite/client" />
+import type { Profile } from "../types/profile.js"
 
 export const profileData: Profile = {
   id: "prof_1",
@@ -42,7 +43,40 @@ export const profileData: Profile = {
 }
 
 export async function getProfile(): Promise<Profile> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 300))
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001"
+    const res = await fetch(`${apiUrl}/api/public/profile`)
+    if (res.ok) {
+      const data = await res.json() as any
+      
+      // Map backend fields to frontend interface
+      return {
+        id: data.id,
+        name: data.name,
+        headline: data.role,
+        subheadline: data.tagline,
+        bio: data.about,
+        shortBio: data.about.split('.')[0] + '.',
+        location: data.location,
+        availability: "Available for new opportunities",
+        email: data.email,
+        phone: undefined,
+        avatar: data.avatarId ? `${apiUrl}/api/public/media/${data.avatarId}` : profileData.avatar,
+        resumeUrl: profileData.resumeUrl,
+        socialLinks: [
+          ...(data.github ? [{ platform: "GitHub", url: data.github, icon: "github" }] : []),
+          ...(data.linkedin ? [{ platform: "LinkedIn", url: data.linkedin, icon: "linkedin" }] : []),
+          ...(data.twitter ? [{ platform: "Twitter", url: data.twitter, icon: "twitter" }] : [])
+        ],
+        roles: profileData.roles,
+        currentFocus: profileData.currentFocus,
+        interests: profileData.interests,
+        values: profileData.values,
+        updatedAt: data.updatedAt
+      }
+    }
+  } catch (error) {
+    console.warn("Failed to fetch profile from API, falling back to local data:", error)
+  }
   return profileData
 }

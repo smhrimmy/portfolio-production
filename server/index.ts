@@ -6,6 +6,10 @@ import { z } from "zod"
 import { PortfolioIndexer } from "./services/PortfolioIndexer.js"
 import { PortfolioRetrievalService } from "./services/PortfolioRetrievalService.js"
 import { ProductionAIProvider } from "./services/ProductionAIProvider.js"
+import { authRouter } from "./routes/auth.js"
+import { requireAdmin } from "./middleware/auth.js"
+import { adminProjectsRouter } from "./routes/admin/projects.js"
+import { adminProfileRouter } from "./routes/admin/profile.js"
 
 dotenv.config()
 
@@ -66,6 +70,74 @@ indexer.loadIndex().catch((err: any) => {
   console.error("Failed to load index on startup:", err.message)
   process.exit(1) // Fail fast if index is missing/corrupted
 })
+
+import { adminAiRouter } from "./routes/admin/ai.js"
+import { adminMediaRouter } from "./routes/admin/media.js"
+import { adminExperienceRouter } from "./routes/admin/experience.js"
+import { adminArticlesRouter } from "./routes/admin/articles.js"
+import { adminSkillsRouter } from "./routes/admin/skills.js"
+import { adminCertificationsRouter } from "./routes/admin/certifications.js"
+import adminNavigationRouter from "./routes/admin/navigation.js"
+import adminSettingsRouter from "./routes/admin/settings.js"
+import adminSeoRouter from "./routes/admin/seo.js"
+import adminGithubRouter from "./routes/admin/github.js"
+import adminExperimentsRouter from "./routes/admin/experiments.js"
+import adminAnalyticsRouter from "./routes/admin/analytics.js"
+import { publicArticlesRouter } from "./routes/public/articles.js"
+import { publicSkillsRouter } from "./routes/public/skills.js"
+import { publicCertificationsRouter } from "./routes/public/certifications.js"
+import publicNavigationRouter from "./routes/public/navigation.js"
+import publicSettingsRouter from "./routes/public/settings.js"
+import publicSeoRouter from "./routes/public/seo.js"
+import publicGithubRouter from "./routes/public/github.js"
+import publicExperimentsRouter from "./routes/public/experiments.js"
+import publicAnalyticsRouter from "./routes/public/analytics.js"
+
+import { publicProfileRouter } from "./routes/public/profile.js"
+
+// Authentication Routes
+app.use("/api/auth", authRouter)
+
+// SEO explicit static paths
+app.use("/sitemap.xml", (req, res, next) => { req.url = "/sitemap.xml"; publicSeoRouter(req, res, next) })
+app.use("/robots.txt", (req, res, next) => { req.url = "/robots.txt"; publicSeoRouter(req, res, next) })
+
+// Public Routes
+app.use("/api/public/profile", publicProfileRouter)
+app.use("/api/public/articles", publicArticlesRouter)
+app.use("/api/public/skills", publicSkillsRouter)
+app.use("/api/public/certifications", publicCertificationsRouter)
+app.use("/api/public/navigation", publicNavigationRouter)
+app.use("/api/public/settings", publicSettingsRouter)
+app.use("/api/public/seo", publicSeoRouter)
+app.use("/api/public/github", publicGithubRouter)
+app.use("/api/public/experiments", publicExperimentsRouter)
+app.use("/api/public/analytics", publicAnalyticsRouter)
+
+// Protected Admin Routes
+const adminRouter = express.Router()
+adminRouter.use(requireAdmin)
+
+adminRouter.get("/health", (req, res) => {
+  res.json({ status: "admin-ok", user: (req as any).user })
+})
+
+adminRouter.use("/profile", adminProfileRouter)
+adminRouter.use("/projects", adminProjectsRouter)
+adminRouter.use("/ai", adminAiRouter)
+adminRouter.use("/media", adminMediaRouter)
+adminRouter.use("/experience", adminExperienceRouter)
+adminRouter.use("/articles", adminArticlesRouter)
+adminRouter.use("/skills", adminSkillsRouter)
+adminRouter.use("/certifications", adminCertificationsRouter)
+adminRouter.use("/navigation", adminNavigationRouter)
+adminRouter.use("/settings", adminSettingsRouter)
+adminRouter.use("/seo", adminSeoRouter)
+adminRouter.use("/github", adminGithubRouter)
+adminRouter.use("/experiments", adminExperimentsRouter)
+adminRouter.use("/analytics", adminAnalyticsRouter)
+
+app.use("/api/admin", adminRouter)
 
 app.get("/health", (_req, res) => {
   res.status(200).json({
@@ -141,3 +213,4 @@ app.post("/api/ai/ask", rateLimiter, async (req, res) => {
 app.listen(port, host, () => {
   console.log(`Portfolio API listening on ${host}:${port}`)
 })
+
