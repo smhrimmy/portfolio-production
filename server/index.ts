@@ -70,7 +70,7 @@ indexer.loadIndex().catch((err: any) => {
 app.get("/health", (_req, res) => {
   res.status(200).json({
     status: "ok",
-    ai: Boolean(process.env.OPENAI_API_KEY),
+    ai: aiProvider.isLiveMode() ? "live" : "offline",
   })
 })
 
@@ -87,13 +87,8 @@ app.post("/api/ai/ask", rateLimiter, async (req, res) => {
 
     const { query, context: _pageContext } = parseResult.data
 
-    if (!process.env.OPENAI_API_KEY) {
-       console.error(`[${requestId}] Missing OpenAI API Key`)
-       return res.status(503).json({ error: { code: "AI_UNAVAILABLE", message: "Server AI configuration missing." } })
-    }
-
     const retrievedContext = await retrievalService.retrieve(query)
-    console.log(`[${requestId}] Retrieved ${retrievedContext.documents.length} context documents`)
+    console.log(`[${requestId}] Retrieved ${retrievedContext.documents.length} context documents (mode: ${aiProvider.isLiveMode() ? "live" : "offline"})`)
 
     if (retrievedContext.documents.length === 0) {
       console.log(`[${requestId}] Empty search result fallback`)
