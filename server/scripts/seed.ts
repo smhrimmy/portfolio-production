@@ -15,14 +15,14 @@ async function main() {
   await prisma.profile.create({
     data: {
       name: profile.name,
-      role: profile.role,
-      tagline: profile.tagline,
-      about: profile.about,
+      role: profile.headline || "",
+      tagline: profile.subheadline || "",
+      about: profile.bio || "",
       location: profile.location,
       email: profile.email,
-      github: profile.socials.github,
-      linkedin: profile.socials.linkedin,
-      twitter: profile.socials.twitter,
+      github: profile.socialLinks?.find(l => l.platform === 'GitHub')?.url || "",
+      linkedin: profile.socialLinks?.find(l => l.platform === 'LinkedIn')?.url || "",
+      twitter: profile.socialLinks?.find(l => l.platform === 'Twitter')?.url || "",
     }
   })
   console.log("Profile seeded.")

@@ -15,7 +15,10 @@ dotenv.config()
 
 const app = express()
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "*",
+  origin: function (origin, callback) {
+    callback(null, true)
+  },
+  credentials: true
 }))
 app.use(express.json())
 

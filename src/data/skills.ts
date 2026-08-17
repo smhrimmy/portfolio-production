@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { SkillCategory } from "../types/skill.js"
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001"
+const API_URL = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_URL : null) || "http://localhost:3001"
 
 // We map unique categories on the fly
 export async function getSkillCategories(): Promise<SkillCategory[]> {
