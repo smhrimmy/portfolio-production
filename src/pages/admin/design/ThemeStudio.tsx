@@ -2,6 +2,8 @@
 import { Check, Palette, LayoutTemplate } from "lucide-react"
 import { useThemeStore } from "../../../store/themeStore"
 import type { PortfolioTheme } from "../../../store/themeStore"
+import React, { useState } from "react"
+import { toast } from "react-hot-toast"
 
 const THEMES: { id: PortfolioTheme; name: string; description: string; colors: string[] }[] = [
   { id: "premium-editorial", name: "Premium Editorial", description: "Clean, typographic focus.", colors: ["bg-neutral-50", "bg-neutral-900"] },
@@ -14,7 +16,20 @@ const THEMES: { id: PortfolioTheme; name: string; description: string; colors: s
 ]
 
 export default function ThemeStudio() {
-  const { portfolioTheme, setPortfolioTheme } = useThemeStore()
+  const { 
+    portfolioTheme, setPortfolioTheme, 
+    primaryColor, bgColor, fontFamily, borderRadius, setCustomizations,
+    saveThemeToDB 
+  } = useThemeStore()
+
+  const [saving, setSaving] = useState(false)
+
+  const handleSave = async () => {
+    setSaving(true)
+    await saveThemeToDB()
+    setSaving(false)
+    toast.success("Theme config saved to database!")
+  }
 
   return (
     <div className="space-y-6">
@@ -25,6 +40,13 @@ export default function ThemeStudio() {
           </h1>
           <p className="text-neutral-400 mt-1">Live design system configuration for Portfolio OS.</p>
         </div>
+        <button 
+          onClick={handleSave} 
+          disabled={saving}
+          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+        >
+          <Check className="w-4 h-4" /> {saving ? "Saving..." : "Save to DB"}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -39,7 +61,10 @@ export default function ThemeStudio() {
                 return (
                   <button
                     key={theme.id}
-                    onClick={() => setPortfolioTheme(theme.id)}
+                    onClick={() => {
+                      setPortfolioTheme(theme.id);
+                      setCustomizations({ primaryColor: null, bgColor: null, fontFamily: null, borderRadius: null });
+                    }}
                     className={`relative p-4 rounded-xl border text-left transition-all ${
                       isActive 
                         ? "border-indigo-500 bg-indigo-500/10" 
@@ -63,6 +88,52 @@ export default function ThemeStudio() {
               })}
             </div>
           </div>
+          
+          <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-neutral-200 mb-4">Advanced Customization</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-neutral-400 mb-1">Primary Color (CSS Variable)</label>
+                <input 
+                  type="text" 
+                  value={primaryColor || ""} 
+                  onChange={(e) => setCustomizations({ primaryColor: e.target.value })}
+                  placeholder="e.g. #3b82f6 or oklch(0.5 0.2 250)"
+                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-400 mb-1">Background Color</label>
+                <input 
+                  type="text" 
+                  value={bgColor || ""} 
+                  onChange={(e) => setCustomizations({ bgColor: e.target.value })}
+                  placeholder="e.g. #09090b"
+                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-400 mb-1">Font Family</label>
+                <input 
+                  type="text" 
+                  value={fontFamily || ""} 
+                  onChange={(e) => setCustomizations({ fontFamily: e.target.value })}
+                  placeholder="e.g. 'Inter', sans-serif"
+                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-400 mb-1">Global Border Radius</label>
+                <input 
+                  type="text" 
+                  value={borderRadius || ""} 
+                  onChange={(e) => setCustomizations({ borderRadius: e.target.value })}
+                  placeholder="e.g. 0.5rem"
+                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -74,7 +145,7 @@ export default function ThemeStudio() {
                 <span className="font-mono text-indigo-400">{portfolioTheme}</span>
               </div>
               <p className="text-xs text-neutral-500">
-                Changes are saved to local state automatically. The public portfolio uses this state to render instantly.
+                Ensure you click "Save to DB" to deploy your theme configuration to the public site.
               </p>
             </div>
           </div>

@@ -7,7 +7,8 @@ export const adminProjectsRouter = Router()
 adminProjectsRouter.get("/", async (_req, res) => {
   try {
     const projects = await prisma.project.findMany({
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
+      include: { skills: true }
     })
     res.json(projects)
   } catch (error: any) {
@@ -19,7 +20,8 @@ adminProjectsRouter.get("/", async (_req, res) => {
 adminProjectsRouter.get("/:id", async (req, res) => {
   try {
     const project = await prisma.project.findUnique({
-      where: { id: req.params.id }
+      where: { id: req.params.id },
+      include: { skills: true }
     })
     if (!project) return res.status(404).json({ error: { message: "Project not found" } })
     res.json(project)
@@ -35,8 +37,19 @@ adminProjectsRouter.post("/", async (req, res) => {
     if (data.publishStatus === "published") {
       data.publishDate = new Date()
     }
+    
+    let skillsConnect = undefined;
+    if (data.skills && Array.isArray(data.skills)) {
+      skillsConnect = { connect: data.skills.map((id: string) => ({ id })) }
+      delete data.skills
+    }
 
-    const project = await prisma.project.create({ data })
+    const project = await prisma.project.create({ 
+      data: {
+        ...data,
+        ...(skillsConnect ? { skills: skillsConnect } : {})
+      }
+    })
 
     // Log the creation
     await prisma.auditLog.create({
@@ -71,9 +84,18 @@ adminProjectsRouter.put("/:id", async (req, res) => {
     // Increment version
     data.version = { increment: 1 }
 
+    let skillsUpdate = undefined;
+    if (data.skills && Array.isArray(data.skills)) {
+      skillsUpdate = { set: data.skills.map((id: string) => ({ id })) }
+      delete data.skills
+    }
+
     const project = await prisma.project.update({
       where: { id: req.params.id },
-      data
+      data: {
+        ...data,
+        ...(skillsUpdate ? { skills: skillsUpdate } : {})
+      }
     })
 
     // Log the update

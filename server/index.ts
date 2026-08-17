@@ -97,6 +97,8 @@ import publicExperimentsRouter from "./routes/public/experiments.js"
 import publicAnalyticsRouter from "./routes/public/analytics.js"
 
 import { publicProfileRouter } from "./routes/public/profile.js"
+import { adminThemeRouter } from "./routes/admin/theme.js"
+import { publicThemeRouter } from "./routes/public/theme.js"
 
 // Authentication Routes
 app.use("/api/auth", authRouter)
@@ -116,6 +118,7 @@ app.use("/api/public/seo", publicSeoRouter)
 app.use("/api/public/github", publicGithubRouter)
 app.use("/api/public/experiments", publicExperimentsRouter)
 app.use("/api/public/analytics", publicAnalyticsRouter)
+app.use("/api/public/theme", publicThemeRouter)
 
 // Protected Admin Routes
 const adminRouter = express.Router()
@@ -139,6 +142,7 @@ adminRouter.use("/seo", adminSeoRouter)
 adminRouter.use("/github", adminGithubRouter)
 adminRouter.use("/experiments", adminExperimentsRouter)
 adminRouter.use("/analytics", adminAnalyticsRouter)
+adminRouter.use("/theme", adminThemeRouter)
 
 app.use("/api/admin", adminRouter)
 

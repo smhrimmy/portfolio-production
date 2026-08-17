@@ -27,6 +27,18 @@ model Profile {
   seoConfig     String? // JSON string
 }
 
+model ThemeConfig {
+  id            String  @id @default(uuid())
+  preset        String  @default("premium-editorial")
+  primaryColor  String?
+  bgColor       String?
+  fontFamily    String?
+  borderRadius  String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Project {
   id          String @id @default(uuid())
   slug        String @unique
@@ -54,6 +66,9 @@ model Project {
   publishDate   DateTime?
   version       Int       @default(1)
   seoConfig     String?
+
+  skills   Skill[]
+  articles Article[]
 }
 
 model Experience {
@@ -79,6 +94,8 @@ model Experience {
   publishDate   DateTime?
   version       Int       @default(1)
   seoConfig     String? // JSON string
+
+  skills Skill[]
 }
 
 model Skill {
@@ -97,6 +114,9 @@ model Skill {
   publishDate   DateTime?
   version       Int       @default(1)
   seoConfig     String? // JSON string
+
+  projects    Project[]
+  experiences Experience[]
 }
 
 model Article {
@@ -111,6 +131,9 @@ model Article {
   author       String  @default("Admin")
   readingTime  Int     @default(5) // in minutes
   featured     Boolean @default(false)
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

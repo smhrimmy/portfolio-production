@@ -11,7 +11,8 @@ adminExperienceRouter.get("/", async (_req, res) => {
         { isCurrent: "desc" },
         { order: "asc" },
         { startDate: "desc" }
-      ]
+      ],
+      include: { skills: true }
     })
     res.json(experiences)
   } catch (error: any) {
@@ -23,7 +24,8 @@ adminExperienceRouter.get("/", async (_req, res) => {
 adminExperienceRouter.get("/:id", async (req, res) => {
   try {
     const experience = await prisma.experience.findUnique({
-      where: { id: req.params.id }
+      where: { id: req.params.id },
+      include: { skills: true }
     })
     if (!experience) return res.status(404).json({ error: { message: "Experience not found" } })
     res.json(experience)
@@ -40,7 +42,18 @@ adminExperienceRouter.post("/", async (req, res) => {
       data.publishDate = new Date()
     }
 
-    const experience = await prisma.experience.create({ data })
+    let skillsConnect = undefined;
+    if (data.skills && Array.isArray(data.skills)) {
+      skillsConnect = { connect: data.skills.map((id: string) => ({ id })) }
+      delete data.skills
+    }
+
+    const experience = await prisma.experience.create({ 
+      data: {
+        ...data,
+        ...(skillsConnect ? { skills: skillsConnect } : {})
+      }
+    })
 
     // Log the creation
     await prisma.auditLog.create({
@@ -75,9 +88,18 @@ adminExperienceRouter.put("/:id", async (req, res) => {
     // Increment version
     data.version = { increment: 1 }
 
+    let skillsUpdate = undefined;
+    if (data.skills && Array.isArray(data.skills)) {
+      skillsUpdate = { set: data.skills.map((id: string) => ({ id })) }
+      delete data.skills
+    }
+
     const experience = await prisma.experience.update({
       where: { id: req.params.id },
-      data
+      data: {
+        ...data,
+        ...(skillsUpdate ? { skills: skillsUpdate } : {})
+      }
     })
 
     // Log the update
