@@ -13,7 +13,7 @@ export default function ExperienceAdmin() {
 
   const fetchExperiences = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = import.meta.env.VITE_API_URL || ""
       const res = await fetch(`${apiUrl}/api/admin/experience`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -30,7 +30,7 @@ export default function ExperienceAdmin() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this experience?")) return
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = import.meta.env.VITE_API_URL || ""
       await fetch(`${apiUrl}/api/admin/experience/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }

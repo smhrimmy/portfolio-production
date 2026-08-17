@@ -28,7 +28,7 @@ const getBrowser = () => {
 
 export const trackEvent = async (payload: AnalyticsEventPayload) => {
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+    const apiUrl = import.meta.env.VITE_API_URL || ""
     
     // Only track if not in admin and not in development (optional, but good practice)
     if (payload.path.startsWith('/admin')) return

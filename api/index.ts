@@ -1,3 +1,7 @@
-import app from "../server/index.js";
+import app from "../server/index.js"
 
-export default app;
+export const config = {
+  maxDuration: 60,
+}
+
+export default app

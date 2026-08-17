@@ -5,7 +5,7 @@ import { Beaker, Star, ArrowRight } from "lucide-react"
 export function Lab() {
   const [experiments, setExperiments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+  const apiUrl = import.meta.env.VITE_API_URL || ""
 
   useEffect(() => {
     fetchExperiments()

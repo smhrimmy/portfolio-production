@@ -32,7 +32,7 @@ export const useThemeStore = create<ThemeState>()(
       setCustomizations: (custom) => set(custom),
       fetchThemeFromDB: async () => {
         try {
-          const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "");
+          const apiUrl = import.meta.env.VITE_API_URL || "";
           const res = await fetch(`${apiUrl}/api/public/theme`);
           if (res.ok) {
             const data = await res.json();
@@ -51,7 +51,7 @@ export const useThemeStore = create<ThemeState>()(
       saveThemeToDB: async () => {
         try {
           const { portfolioTheme, primaryColor, bgColor, fontFamily, borderRadius } = get();
-          const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "");
+          const apiUrl = import.meta.env.VITE_API_URL || "";
           const token = localStorage.getItem('token');
           await fetch(`${apiUrl}/api/admin/theme`, {
             method: 'PUT',

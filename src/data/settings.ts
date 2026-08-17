@@ -24,7 +24,7 @@ const defaultSettings: SiteSettings = {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   try {
-    const apiUrl = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_URL : null) || (typeof import.meta !== 'undefined' && import.meta.env?.DEV ? "http://localhost:3001" : "")
+    const apiUrl = import.meta.env.VITE_API_URL || ""
     const res = await fetch(`${apiUrl}/api/public/settings`)
     if (res.ok) {
       return await res.json()

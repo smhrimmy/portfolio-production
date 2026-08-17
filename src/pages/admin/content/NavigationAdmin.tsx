@@ -7,7 +7,7 @@ export default function NavigationAdmin() {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState({ type: "", text: "" })
   const { token } = useAuthStore()
-  const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+  const apiUrl = import.meta.env.VITE_API_URL || ""
 
   useEffect(() => {
     fetchItems()

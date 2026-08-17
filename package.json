@@ -8,9 +8,13 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:api": "tsx server/index.ts",
     "build": "prisma generate && tsc -b && vite build",
     "build:server": "tsc -p tsconfig.server.json",
     "start": "node dist-server/index.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "tsx server/scripts/seed.ts",
     "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "index": "tsx server/scripts/build-index.ts",

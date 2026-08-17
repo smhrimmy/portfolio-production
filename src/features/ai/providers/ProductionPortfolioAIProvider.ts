@@ -1,11 +1,13 @@
 import type { PortfolioAIProvider, AIResponse } from "../types"
 import type { SearchDocument } from "../../../types/search"
 
+import { apiUrl } from "../../../lib/api"
+
 export class ProductionPortfolioAIProvider implements PortfolioAIProvider {
   private apiEndpoint: string
 
   constructor(apiEndpoint?: string) {
-    this.apiEndpoint = apiEndpoint || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001/api/ai/ask" : "/api/ai/ask")
+    this.apiEndpoint = apiEndpoint || apiUrl("/api/ai/ask")
   }
 
   async answer(query: string, _context: SearchDocument[], onChunk?: (chunk: string) => void, options?: { signal?: AbortSignal }): Promise<AIResponse> {

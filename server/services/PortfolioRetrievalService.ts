@@ -44,19 +44,27 @@ export class PortfolioRetrievalService {
   }
 
   async retrieve(query: string): Promise<RetrievedContext> {
-    const queryEmbedding = await this.indexer.embedText(query)
     const docs = this.indexer.getDocuments()
-    
+    let queryEmbedding: number[] | null = null
+    try {
+      queryEmbedding = await this.indexer.embedText(query)
+    } catch (error) {
+      console.warn("Embedding model unavailable; falling back to keyword retrieval.", error)
+    }
+
     const normalizedQuery = query.toLowerCase()
+    const tokens = normalizedQuery.split(/\W+/).filter((token) => token.length > 2)
     const intent = classifyIntent(query)
-    
-    // Hybrid ranking: Exact match bonus + Semantic similarity + Intent match
+
     const ranked = docs.map((doc: IndexedDocument) => {
-      let score = cosineSimilarity(queryEmbedding, doc.embedding)
-      
-      // Keyword bonus
+      let score = queryEmbedding ? cosineSimilarity(queryEmbedding, doc.embedding) : 0
+      const haystack = `${doc.title} ${doc.content}`.toLowerCase()
+
       if (doc.title.toLowerCase().includes(normalizedQuery)) score += 0.2
       if (doc.content.toLowerCase().includes(normalizedQuery)) score += 0.1
+      for (const token of tokens) {
+        if (haystack.includes(token)) score += queryEmbedding ? 0.04 : 0.12
+      }
       
       // Metadata bonus (e.g. technologies)
       if (doc.metadata?.technologies?.some((t: string) => t.toLowerCase() === normalizedQuery)) {

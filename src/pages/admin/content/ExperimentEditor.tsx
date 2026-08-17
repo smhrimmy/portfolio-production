@@ -8,7 +8,7 @@ export default function ExperimentEditor() {
   const navigate = useNavigate()
   const { token } = useAuthStore()
   const isNew = id === "new"
-  const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+  const apiUrl = import.meta.env.VITE_API_URL || ""
 
   const [exp, setExp] = useState<any>({
     title: "", slug: "", description: "", content: "", category: "WebGL",

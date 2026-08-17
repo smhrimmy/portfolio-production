@@ -37,6 +37,19 @@ const LOCAL_EXPERIENCE: Experience[] = [
   }
 ]
 
+export const LOCAL_EXPERIENCE_DATA = LOCAL_EXPERIENCE
+
 export async function getExperience(): Promise<Experience[]> {
-  return LOCAL_EXPERIENCE.sort((a, b) => a.order - b.order)
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/public/experience`)
+    if (res.ok) {
+      const data = await res.json() as Experience[]
+      if (Array.isArray(data) && data.length > 0) {
+        return [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      }
+    }
+  } catch {
+    // fall through to local data
+  }
+  return [...LOCAL_EXPERIENCE].sort((a, b) => a.order - b.order)
 }

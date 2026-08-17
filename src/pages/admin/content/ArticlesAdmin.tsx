@@ -13,7 +13,7 @@ export default function ArticlesAdmin() {
 
   const fetchArticles = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = import.meta.env.VITE_API_URL || ""
       const res = await fetch(`${apiUrl}/api/admin/articles`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -30,7 +30,7 @@ export default function ArticlesAdmin() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this article?")) return
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = import.meta.env.VITE_API_URL || ""
       await fetch(`${apiUrl}/api/admin/articles/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }

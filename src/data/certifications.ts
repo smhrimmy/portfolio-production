@@ -1,6 +1,6 @@
 
 
-const API_URL = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_URL : null) || (typeof import.meta !== 'undefined' && import.meta.env?.DEV ? "http://localhost:3001" : "")
+const API_URL = import.meta.env.VITE_API_URL || ""
 
 export async function getCertifications(): Promise<any[]> {
   try {
