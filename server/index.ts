@@ -15,7 +15,7 @@ dotenv.config()
 
 const app = express()
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: function (_origin, callback) {
     callback(null, true)
   },
   credentials: true
@@ -213,7 +213,11 @@ app.post("/api/ai/ask", rateLimiter, async (req, res) => {
   }
 })
 
-app.listen(port, host, () => {
-  console.log(`Portfolio API listening on ${host}:${port}`)
-})
+if (process.env.NODE_ENV !== "production" || process.env.RUN_LOCAL === "true") {
+  app.listen(port, host, () => {
+    console.log(`Portfolio API listening on ${host}:${port}`)
+  })
+}
+
+export default app;
 

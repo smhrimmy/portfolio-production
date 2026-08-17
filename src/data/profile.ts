@@ -44,7 +44,7 @@ export const profileData: Profile = {
 
 export async function getProfile(): Promise<Profile> {
   try {
-    const apiUrl = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_URL : null) || "http://localhost:3001"
+    const apiUrl = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_URL : null) || (typeof import.meta !== 'undefined' && import.meta.env?.DEV ? "http://localhost:3001" : "")
     const res = await fetch(`${apiUrl}/api/public/profile`)
     if (res.ok) {
       const data = await res.json() as any

@@ -18,7 +18,7 @@ const defaultNavItems: NavigationItem[] = [
 
 export async function getNavigationItems(location?: string): Promise<NavigationItem[]> {
   try {
-    const apiUrl = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_URL : null) || "http://localhost:3001"
+    const apiUrl = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_API_URL : null) || (typeof import.meta !== 'undefined' && import.meta.env?.DEV ? "http://localhost:3001" : "")
     const res = await fetch(`${apiUrl}/api/public/navigation`)
     if (res.ok) {
       const items: NavigationItem[] = await res.json()

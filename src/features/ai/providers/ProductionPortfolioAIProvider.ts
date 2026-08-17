@@ -5,7 +5,7 @@ export class ProductionPortfolioAIProvider implements PortfolioAIProvider {
   private apiEndpoint: string
 
   constructor(apiEndpoint?: string) {
-    this.apiEndpoint = apiEndpoint || import.meta.env.VITE_API_URL || "http://localhost:3001/api/ai/ask"
+    this.apiEndpoint = apiEndpoint || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001/api/ai/ask" : "/api/ai/ask")
   }
 
   async answer(query: string, _context: SearchDocument[], onChunk?: (chunk: string) => void, options?: { signal?: AbortSignal }): Promise<AIResponse> {

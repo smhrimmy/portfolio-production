@@ -13,7 +13,7 @@ export default function SkillsAdmin() {
 
   const fetchSkills = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001"
+      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
       const res = await fetch(`${apiUrl}/api/admin/skills`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -30,7 +30,7 @@ export default function SkillsAdmin() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this skill?")) return
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001"
+      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
       await fetch(`${apiUrl}/api/admin/skills/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }

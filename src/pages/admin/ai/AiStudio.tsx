@@ -26,7 +26,7 @@ export default function AiStudio() {
                     : activeTool === "seo" ? { content: input } 
                     : { text: input, action: "rewrite" }
 
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001"
+      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
       const res = await fetch(`${apiUrl}${endpoint}`, {
         method: "POST",
         headers: {
