@@ -1,0 +1,333 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id       String  @id @default(uuid())
+  name     String
+  role     String
+  tagline  String
+  about    String
+  location String
+  email    String
+  github   String?
+  linkedin String?
+  twitter  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft") // "draft", "published", "archived"
+  publishDate   DateTime?
+  version       Int       @default(1)
+  seoConfig     String? // JSON string
+}
+
+model ThemeConfig {
+  id            String  @id @default(uuid())
+  preset        String  @default("premium-editorial")
+  primaryColor  String?
+  bgColor       String?
+  fontFamily    String?
+  borderRadius  String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id          String @id @default(uuid())
+  slug        String @unique
+  title       String
+  description String
+  status      String // "completed", "in-progress", etc.
+  category    String // "Full Stack", "AI", etc.
+
+  techStack  String // JSON string
+  challenges String // JSON string
+  solutions  String // JSON string
+  goals      String // JSON string
+  results    String // JSON string
+
+  imageUrl  String?
+  githubUrl String?
+  liveUrl   String?
+
+  featured Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  seoConfig     String?
+
+  skills   Skill[]
+  articles Article[]
+}
+
+model Experience {
+  id           String  @id @default(uuid())
+  company      String
+  role         String
+  location     String
+  type         String // "Full-time", "Contract"
+  startDate    String // "2021-01"
+  endDate      String? // "2023-01" or null for present
+  isCurrent    Boolean @default(false)
+  description  String
+  achievements String // JSON string
+  techStack    String // JSON string
+
+  logoMediaId String?
+  order       Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  seoConfig     String? // JSON string
+
+  skills Skill[]
+}
+
+model Skill {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  category    String // "Frontend", "Backend", "AI"
+  proficiency Int // 1-100
+  icon        String?
+  logoMediaId String?
+  order       Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  seoConfig     String? // JSON string
+
+  projects    Project[]
+  experiences Experience[]
+}
+
+model Article {
+  id           String  @id @default(uuid())
+  slug         String  @unique
+  title        String
+  content      String
+  excerpt      String
+  coverMediaId String? // References the Google Drive Media Library ID
+  category     String // e.g. "Engineering", "Tutorials"
+  tags         String // JSON string array
+  author       String  @default("Admin")
+  readingTime  Int     @default(5) // in minutes
+  featured     Boolean @default(false)
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  seoConfig     String? // JSON string
+}
+
+model Certification {
+  id             String  @id @default(uuid())
+  name           String
+  issuer         String
+  description    String?
+  issueDate      String // e.g. "2024-05"
+  expirationDate String? // e.g. "2027-05", or null if never expires
+  credentialId   String?
+  url            String?
+
+  mediaId String?
+  skills  String  @default("[]") // JSON string array
+  order   Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  seoConfig     String? // JSON string
+}
+
+model AuditLog {
+  id       String @id @default(uuid())
+  entity   String // e.g. "Project", "Article"
+  entityId String
+  action   String // "create", "update", "publish", "archive"
+  user     String // admin ID
+  changes  String // JSON payload of changes
+
+  createdAt DateTime @default(now())
+}
+
+model Media {
+  id           String  @id @default(uuid())
+  name         String
+  mimeType     String
+  size         Int
+  providerId   String  @unique
+  providerUrl  String
+  thumbnailUrl String?
+  altText      String?
+  caption      String?
+  folderId     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NavigationItem {
+  id         String  @id @default(uuid())
+  label      String
+  path       String
+  isExternal Boolean @default(false)
+  isActive   Boolean @default(true)
+  location   String // e.g. "header", "footer", "mobile"
+  order      Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+}
+
+model SiteSettings {
+  id            String  @id @default(uuid())
+  titleTemplate String  @default("%s | Portfolio OS")
+  description   String
+  resumeCtaText String  @default("Download Resume")
+  resumeCtaLink String? // Override for default resume link
+  contactEmail  String
+  availability  String  @default("available") // "available", "busy", "unavailable"
+
+  seoDefaults String // JSON string
+  features    String // JSON string (flags for sections)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+}
+
+model SeoRoute {
+  id             String  @id @default(uuid())
+  path           String  @unique
+  title          String?
+  description    String?
+  keywords       String?
+  ogImageId      String?
+  noIndex        Boolean @default(false)
+  canonicalUrl   String?
+  structuredData String? // JSON string
+
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GithubConfig {
+  id          String   @id @default(uuid())
+  username    String
+  accessToken String?  // Optional
+  isActive    Boolean  @default(true)
+  lastSynced  DateTime?
+  
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GithubRepository {
+  id          String   @id @default(uuid())
+  repoId      Int      @unique
+  name        String
+  fullName    String
+  description String?
+  url         String
+  homepage    String?
+  stars       Int      @default(0)
+  forks       Int      @default(0)
+  language    String?
+  topics      String   // JSON string array
+  
+  isFeatured  Boolean  @default(false)
+  order       Int      @default(0)
+  
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experiment {
+  id          String @id @default(uuid())
+  slug        String @unique
+  title       String
+  description String
+  content     String
+  category    String
+  
+  coverMediaId String?
+  gallery      String  @default("[]")
+  
+  techStack    String  @default("[]")
+  githubUrl    String?
+  demoUrl      String?
+  
+  featured    Boolean @default(false)
+  order       Int     @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  publishStatus String    @default("draft")
+  publishDate   DateTime?
+  version       Int       @default(1)
+  seoConfig     String?
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  eventType String   // e.g., "page_view", "project_click", "resume_download"
+  path      String   // e.g., "/about", "/projects/portfolio-os"
+  referrer  String?  // Document referrer
+  device    String?  // "mobile", "desktop", "tablet"
+  browser   String?  // "chrome", "firefox", "safari"
+  country   String?  // Optional geolocation if desired in the future
+  
+  // For specific entity interactions
+  entityType String? // e.g., "project", "article"
+  entityId   String? 
+  
+  createdAt DateTime @default(now())
+}

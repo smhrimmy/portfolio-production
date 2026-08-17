@@ -1,4 +1,4 @@
-import type { Experience } from "../types/experience"
+import type { Experience } from "../types/experience.js"
 
 const LOCAL_EXPERIENCE: Experience[] = [
   {
