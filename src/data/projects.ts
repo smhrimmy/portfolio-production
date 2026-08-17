@@ -1,6 +1,6 @@
-import type { Project } from "../types/project"
+import type { Project } from "../types/project.js"
 
-const LOCAL_PROJECTS: Project[] = [
+export const LOCAL_PROJECTS_DATA: Project[] = [
   {
     id: "proj-1",
     slug: "portfolio-os",
@@ -109,28 +109,51 @@ const LOCAL_PROJECTS: Project[] = [
   }
 ]
 
+async function fetchPublishedProjects(): Promise<Project[] | null> {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/public/projects`)
+    if (!res.ok) return null
+    const data = await res.json() as Project[]
+    return Array.isArray(data) && data.length > 0 ? data : null
+  } catch {
+    return null
+  }
+}
+
 export async function getProjects(): Promise<Project[]> {
-  return LOCAL_PROJECTS.sort((a, b) => a.order - b.order)
+  const remote = await fetchPublishedProjects()
+  const projects = remote ?? LOCAL_PROJECTS_DATA
+  return [...projects].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
-  const featured = LOCAL_PROJECTS.filter((p) => p.featured)
+  const projects = await getProjects()
+  const featured = projects.filter((p) => p.featured)
   if (featured.length === 0) {
-    return LOCAL_PROJECTS.slice(0, 3)
+    return projects.slice(0, 3)
   }
-  return featured.sort((a, b) => a.order - b.order)
+  return featured
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
-  return LOCAL_PROJECTS.find((p) => p.slug === slug) || null
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/public/projects/${slug}`)
+    if (res.ok) {
+      return await res.json() as Project
+    }
+  } catch {
+    // fall through to local data
+  }
+  return LOCAL_PROJECTS_DATA.find((p) => p.slug === slug) || null
 }
 
 export async function getProjectsByCategory(category: string): Promise<Project[]> {
   if (category === "All") return getProjects()
-  return LOCAL_PROJECTS.filter((p) => p.category === category).sort((a, b) => a.order - b.order)
+  const projects = await getProjects()
+  return projects.filter((p) => p.category === category)
 }
 
 export async function getProjectCategories(): Promise<string[]> {
-  const categories = new Set(LOCAL_PROJECTS.map((p) => p.category))
-  return Array.from(categories)
+  const projects = await getProjects()
+  return Array.from(new Set(projects.map((p) => p.category)))
 }

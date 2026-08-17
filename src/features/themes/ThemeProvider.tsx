@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { useThemeStore } from "../../store/themeStore"
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { colorMode, portfolioTheme } = useThemeStore()
+  const { colorMode, portfolioTheme, primaryColor, bgColor, fontFamily, borderRadius } = useThemeStore()
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -32,7 +32,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     // Apply portfolio theme
     root.classList.add(`theme-${portfolioTheme}`)
-  }, [colorMode, portfolioTheme])
+
+    // Inject advanced customizations
+    if (primaryColor) root.style.setProperty('--color-primary', primaryColor)
+    else root.style.removeProperty('--color-primary')
+    
+    if (bgColor) root.style.setProperty('--color-bg', bgColor)
+    else root.style.removeProperty('--color-bg')
+    
+    if (fontFamily) root.style.setProperty('--font-primary', fontFamily)
+    else root.style.removeProperty('--font-primary')
+    
+    if (borderRadius) root.style.setProperty('--radius', borderRadius)
+    else root.style.removeProperty('--radius')
+
+  }, [colorMode, portfolioTheme, primaryColor, bgColor, fontFamily, borderRadius])
 
   return <>{children}</>
 }

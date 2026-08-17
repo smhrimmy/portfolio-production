@@ -1,3 +1,5 @@
+import os from "node:os"
+import path from "node:path"
 import { describe, it, expect, beforeAll } from "vitest"
 import { PortfolioIndexer } from "../../server/services/PortfolioIndexer.js"
 import { PortfolioRetrievalService } from "../../server/services/PortfolioRetrievalService.js"
@@ -7,7 +9,7 @@ describe("AI Grounding & Retrieval Test Suite", () => {
   let retrievalService: PortfolioRetrievalService
 
   beforeAll(async () => {
-    indexer = new PortfolioIndexer()
+    indexer = new PortfolioIndexer(path.join(os.tmpdir(), `portfolio-index-${process.pid}.json`))
     // For tests, we'll build a memory index instead of loading from disk
     const mockContent = [
       {

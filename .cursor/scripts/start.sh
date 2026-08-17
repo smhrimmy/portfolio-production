@@ -8,12 +8,10 @@ if [[ ! -f .env ]]; then
 fi
 
 api_port="${PORT:-3001}"
-api_url="http://127.0.0.1:${api_port}/api/ai/ask"
+health_url="http://127.0.0.1:${api_port}/health"
 
 api_ready() {
-  curl -sf -X POST "$api_url" \
-    -H "Content-Type: application/json" \
-    -d '{"query":"health"}' >/dev/null 2>&1
+  curl -sf "$health_url" >/dev/null 2>&1
 }
 
 if api_ready; then
@@ -33,4 +31,5 @@ for _ in $(seq 1 30); do
 done
 
 echo "Portfolio API server failed to start within 30 seconds" >&2
+tail -n 40 /tmp/portfolio-api.log >&2 || true
 exit 1
