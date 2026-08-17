@@ -29,7 +29,7 @@ router.get("/", async (_req, res) => {
     })
     
     // Parse JSON string fields
-    const parsedExperiments = experiments.map(exp => ({
+    const parsedExperiments = experiments.map((exp: any) => ({
       ...exp,
       techStack: exp.techStack ? JSON.parse(exp.techStack) : []
     }))

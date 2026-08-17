@@ -18,7 +18,7 @@ router.get("/repositories", async (_req, res) => {
     })
     
     // Parse topics back to array
-    const parsedRepos = repos.map(r => ({
+    const parsedRepos = repos.map((r: any) => ({
       ...r,
       topics: r.topics ? JSON.parse(r.topics) : []
     }))
@@ -38,13 +38,13 @@ router.get("/stats", async (_req, res) => {
     })
     
     const stats = {
-      totalStars: repos.reduce((sum, r) => sum + r.stars, 0),
-      totalForks: repos.reduce((sum, r) => sum + r.forks, 0),
+      totalStars: repos.reduce((sum: number, r: any) => sum + r.stars, 0),
+      totalForks: repos.reduce((sum: number, r: any) => sum + r.forks, 0),
       totalRepos: repos.length,
       languages: {} as Record<string, number>
     }
     
-    repos.forEach(r => {
+    repos.forEach((r: any) => {
       if (r.language) {
         stats.languages[r.language] = (stats.languages[r.language] || 0) + 1
       }

@@ -40,8 +40,8 @@ router.get("/summary", async (_req, res) => {
     res.json({
       totalViews,
       recentViews,
-      topPages: topPages.map(p => ({ path: p.path, views: p._count.path })),
-      topReferrers: topReferrers.map(r => ({ referrer: r.referrer, count: r._count.referrer }))
+      topPages: topPages.map((p: any) => ({ path: p.path, views: p._count.path })),
+      topReferrers: topReferrers.map((r: any) => ({ referrer: r.referrer, count: r._count.referrer }))
     })
   } catch (error) {
     res.status(500).json({ error: { code: "SERVER_ERROR", message: "Failed to fetch summary" } })
