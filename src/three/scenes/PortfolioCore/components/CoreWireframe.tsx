@@ -1,28 +1,29 @@
 import { useRef } from "react"
 import { useFrame } from "@react-three/fiber"
 import * as THREE from "three"
-import { useThemeStore } from "../../../../store/themeStore"
+import { getSceneColors } from "../../../../design-system/colors"
+import { useResolvedColorMode } from "../../../hooks/useResolvedColorMode"
 
 export function CoreWireframe() {
-  const { portfolioTheme } = useThemeStore()
-  const accentColor = portfolioTheme === "cyberpunk" ? "#ff00ff" : "#4f46e5"
-  
+  const isDark = useResolvedColorMode()
+  const colors = getSceneColors(isDark)
+
   const mesh = useRef<THREE.Mesh>(null)
 
   useFrame((_, delta) => {
     if (!mesh.current) return
-    mesh.current.rotation.y -= delta * 0.08
-    mesh.current.rotation.x += delta * 0.04
+    mesh.current.rotation.y -= delta * 0.05
+    mesh.current.rotation.x += delta * 0.025
   })
 
   return (
-    <mesh ref={mesh} scale={1.04}>
+    <mesh ref={mesh} scale={1.06}>
       <icosahedronGeometry args={[1.35, 2]} />
       <meshBasicMaterial
-        color={accentColor}
+        color={colors.wireframe}
         wireframe
         transparent
-        opacity={0.16}
+        opacity={isDark ? 0.28 : 0.2}
       />
     </mesh>
   )

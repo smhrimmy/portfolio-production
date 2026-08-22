@@ -4,35 +4,38 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --background-secondary: 0 0% 98%;
+    --background: 210 33% 97%;
+    --background-secondary: 210 20% 94%;
     --surface: 0 0% 100%;
-    --surface-elevated: 0 0% 98%;
-    
-    --foreground: 240 10% 3.9%;
-    --foreground-secondary: 240 3.8% 46.1%;
-    
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --surface-elevated: 210 20% 96%;
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+    --foreground: 220 30% 8%;
+    --foreground-secondary: 216 16% 40%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --muted: 210 20% 92%;
+    --muted-foreground: 216 16% 40%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --border: 216 20% 85%;
+    --input: 216 20% 85%;
+    --ring: 191 100% 40%;
 
-    --success: 142.1 76.2% 36.3%;
-    --success-foreground: 355.7 100% 97.3%;
+    --primary: 191 100% 40%;
+    --primary-foreground: 220 30% 4%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 48 96% 89%;
+    --secondary: 210 20% 92%;
+    --secondary-foreground: 220 30% 8%;
+
+    --accent: 246 80% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --brand-cyan: 191 100% 60%;
+    --brand-violet: 246 100% 74%;
+
+    --success: 152 73% 42%;
+    --success-foreground: 220 30% 4%;
+
+    --warning: 40 100% 50%;
+    --warning-foreground: 220 30% 4%;
 
     --error: 0 84.2% 60.2%;
     --error-foreground: 0 0% 98%;
@@ -41,37 +44,41 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --background-secondary: 240 5% 6%;
-    --surface: 240 5% 8%;
-    --surface-elevated: 240 5% 12%;
-    
-    --foreground: 0 0% 98%;
-    --foreground-secondary: 240 5% 65%;
-    
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 65%;
-    
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    /* Obsidian + Cyan + Violet */
+    --background: 220 30% 4%;
+    --background-secondary: 216 28% 7%;
+    --surface: 216 28% 7%;
+    --surface-elevated: 216 28% 10%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
+    --foreground: 210 33% 97%;
+    --foreground-secondary: 216 16% 65%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --muted: 216 28% 10%;
+    --muted-foreground: 216 16% 65%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --border: 216 26% 17%;
+    --input: 216 26% 17%;
+    --ring: 191 100% 60%;
 
-    --success: 142.1 70.6% 45.3%;
-    --success-foreground: 144.9 80.4% 10%;
+    --primary: 191 100% 60%;
+    --primary-foreground: 220 30% 4%;
 
-    --warning: 48 96% 89%;
-    --warning-foreground: 38 92% 50%;
+    --secondary: 216 28% 10%;
+    --secondary-foreground: 210 33% 97%;
 
-    --error: 0 62.8% 30.6%;
+    --accent: 246 100% 74%;
+    --accent-foreground: 220 30% 4%;
+
+    --brand-cyan: 191 100% 60%;
+    --brand-violet: 246 100% 74%;
+
+    --success: 152 73% 62%;
+    --success-foreground: 220 30% 4%;
+
+    --warning: 40 100% 70%;
+    --warning-foreground: 220 30% 4%;
+
+    --error: 0 62.8% 50%;
     --error-foreground: 0 0% 98%;
   }
 }
@@ -81,7 +88,19 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-[hsl(var(--brand-cyan))] to-[hsl(var(--brand-violet))] bg-clip-text text-transparent;
+  }
+  .glow-cyan-sm {
+    box-shadow: 0 0 20px hsl(var(--brand-cyan) / 0.15);
+  }
+  .border-brand-subtle {
+    border-color: hsl(var(--brand-cyan) / 0.2);
   }
 }

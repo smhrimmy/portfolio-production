@@ -20,6 +20,10 @@ export default {
         mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
+        brand: {
+          cyan: "hsl(var(--brand-cyan))",
+          violet: "hsl(var(--brand-violet))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -94,6 +98,10 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      boxShadow: {
+        "glow-cyan": "0 0 24px hsl(var(--brand-cyan) / 0.18)",
+        "glow-violet": "0 0 24px hsl(var(--brand-violet) / 0.15)",
       },
     },
   },

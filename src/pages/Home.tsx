@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getFeaturedProjects } from "../data/projects"
+import { getFeaturedProjects, getProjects } from "../data/projects"
 import { getExperience } from "../data/experience"
 import { getArticles } from "../data/articles"
 import { getFeaturedSkills } from "../data/skills"
@@ -37,10 +37,16 @@ export function Home() {
           getArticles(),
           getFeaturedSkills(),
         ])
-        setProjects(proj.slice(0, 3))
-        setExperience(exp.slice(0, 3)) 
-        setArticles(art.slice(0, 2)) 
-        setSkills(sk) 
+        const allProjects = await getProjects()
+        const homeProjects = [...proj]
+        for (const p of allProjects) {
+          if (!homeProjects.some((h) => h.id === p.id)) homeProjects.push(p)
+          if (homeProjects.length >= 4) break
+        }
+        setProjects(homeProjects.slice(0, 4))
+        setExperience(exp.slice(0, 3))
+        setArticles(art.slice(0, 2))
+        setSkills(sk)
       } finally {
         setIsLoading(false)
       }
