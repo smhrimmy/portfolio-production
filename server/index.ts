@@ -128,6 +128,7 @@ import { adminSitesRouter } from "./routes/admin/sites.js"
 import { adminAuditRouter } from "./routes/admin/audit.js"
 import { adminTestimonialsRouter } from "./routes/admin/testimonials.js"
 import { adminSubscribersRouter } from "./routes/admin/subscribers.js"
+import { adminBackupRouter } from "./routes/admin/backup.js"
 
 // Public API Routes
 import { publicNewsletterRouter } from "./routes/public/newsletter.js"
@@ -168,6 +169,7 @@ adminRouter.use("/sites", adminSitesRouter)
 adminRouter.use("/audit", adminAuditRouter)
 adminRouter.use("/testimonials", adminTestimonialsRouter)
 adminRouter.use("/subscribers", adminSubscribersRouter)
+adminRouter.use("/backup", adminBackupRouter)
 
 app.use("/api/admin", adminRouter)
 

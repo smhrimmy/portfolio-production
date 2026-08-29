@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation, Navigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { LayoutDashboard, Users, FolderKanban, Briefcase, Award, PenTool, LayoutTemplate, MessageSquare, Settings, LogOut, Bot, Image, Square, Globe, Search, Code, Beaker, BarChart } from "lucide-react"
+import { LayoutDashboard, Users, FolderKanban, Briefcase, Award, PenTool, LayoutTemplate, MessageSquare, Settings, LogOut, Bot, Image, Square, Globe, Search, Code, Beaker, BarChart, Database } from "lucide-react"
 import { useAuthStore } from "../stores/authStore"
 import { AnalyticsTracker } from "../components/AnalyticsTracker"
 import { IntelligencePanel } from "../components/admin/IntelligencePanel"
@@ -26,6 +26,7 @@ const NAV_ITEMS = [
   { name: "GitHub Integration", path: "/admin/github", icon: Code },
   { name: "AI Studio", path: "/admin/ai", icon: Bot },
   { name: "Contact", path: "/admin/contact", icon: MessageSquare },
+  { name: "Backup & Restore", path: "/admin/settings/backup", icon: Database },
   { name: "Settings", path: "/admin/settings", icon: Settings },
 ]
 

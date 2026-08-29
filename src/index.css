@@ -86,3 +86,18 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+@media print {
+  /* Hide specific structural elements */
+  nav, footer, .print-hide {
+    display: none !important;
+  }
+  /* Ensure page backgrounds and text are clean for PDF */
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  @page {
+    margin: 1.5cm;
+  }
+}

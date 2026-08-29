@@ -25,6 +25,7 @@ import CertificationsAdmin from "../pages/admin/content/CertificationsAdmin"
 import SitesAdmin from "../pages/admin/content/SitesAdmin"
 import TestimonialsAdmin from "../pages/admin/content/TestimonialsAdmin"
 import SubscribersAdmin from "../pages/admin/audience/SubscribersAdmin"
+import BackupAdmin from "../pages/admin/settings/BackupAdmin"
 import PublishingDashboard from "../pages/admin/content/PublishingDashboard"
 import ThemeStudio from "../pages/admin/design/ThemeStudio"
 import AiStudio from "../pages/admin/ai/AiStudio"
@@ -111,6 +112,10 @@ export const router = createBrowserRouter([
       {
         path: "content/certifications",
         element: <CertificationsAdmin />
+      },
+      {
+        path: "settings/backup",
+        element: <BackupAdmin />
       },
       {
         path: "content/testimonials",
