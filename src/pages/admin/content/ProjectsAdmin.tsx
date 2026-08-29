@@ -37,7 +37,7 @@ export default function ProjectsAdmin() {
         const data = await res.json()
         setProjects(data)
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error("Failed to fetch projects", err)
     } finally {
       setLoading(false)

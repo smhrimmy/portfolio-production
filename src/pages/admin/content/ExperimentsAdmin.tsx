@@ -20,7 +20,7 @@ export default function ExperimentsAdmin() {
         headers: { "Authorization": `Bearer ${token}` }
       })
       if (res.ok) setExperiments(await res.json())
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
     } finally {
       setLoading(false)
@@ -35,7 +35,7 @@ export default function ExperimentsAdmin() {
         headers: { "Authorization": `Bearer ${token}` }
       })
       setExperiments(experiments.filter(e => e.id !== id))
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
     }
   }

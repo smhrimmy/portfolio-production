@@ -58,7 +58,7 @@ export default function ArticlesAdmin() {
       if (res.ok) {
         setArticles(await res.json())
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error("Failed to fetch articles", err)
     } finally {
       setLoading(false)
@@ -74,7 +74,7 @@ export default function ArticlesAdmin() {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchArticles()
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
     }
   }
@@ -139,7 +139,7 @@ export default function ArticlesAdmin() {
         const error = await res.json()
         toast.error(`Error: ${error.error?.message || "Failed to save"}`)
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
       toast.error("Network error while saving")
     }
@@ -173,7 +173,7 @@ export default function ArticlesAdmin() {
       } else {
         toast.error(`AI Error: ${data.error?.message}`)
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
       toast.error("Failed to generate AI content")
     } finally {
@@ -207,7 +207,7 @@ export default function ArticlesAdmin() {
       } else {
         toast.error(`AI Error: ${data.error?.message}`)
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
       toast.error("Failed to generate SEO metadata")
     } finally {

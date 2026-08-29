@@ -27,7 +27,7 @@ export default function SettingsAdmin() {
       } else {
         setMessage({ type: "error", text: "Failed to load settings" })
       }
-    } catch (_err) {
+    } catch (err: any) {
       setMessage({ type: "error", text: "Network error loading settings" })
     } finally {
       setLoading(false)
@@ -53,7 +53,7 @@ export default function SettingsAdmin() {
       } else {
         setMessage({ type: "error", text: "Failed to save draft" })
       }
-    } catch (_err) {
+    } catch (err: any) {
       setMessage({ type: "error", text: "Network error saving settings" })
     } finally {
       setSaving(false)
@@ -75,7 +75,7 @@ export default function SettingsAdmin() {
       } else {
         setMessage({ type: "error", text: "Failed to publish settings" })
       }
-    } catch (_err) {
+    } catch (err: any) {
       setMessage({ type: "error", text: "Network error publishing settings" })
     } finally {
       setPublishing(false)

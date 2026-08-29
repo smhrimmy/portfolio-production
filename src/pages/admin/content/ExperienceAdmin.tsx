@@ -21,7 +21,7 @@ export default function ExperienceAdmin() {
       if (res.ok) {
         setExperiences(await res.json())
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error("Failed to fetch experiences", err)
     } finally {
       setLoading(false)
@@ -37,7 +37,7 @@ export default function ExperienceAdmin() {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchExperiences()
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
     }
   }

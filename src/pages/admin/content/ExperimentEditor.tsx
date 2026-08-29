@@ -32,7 +32,7 @@ export default function ExperimentEditor() {
       })
       if (res.ok) setExp(await res.json())
       else setError("Failed to load experiment")
-    } catch (_err) {
+    } catch (err: any) {
       setError("Network error")
     } finally {
       setLoading(false)
@@ -64,7 +64,7 @@ export default function ExperimentEditor() {
         const err = await res.json()
         setError(err.error?.message || "Failed to save")
       }
-    } catch (_err) {
+    } catch (err: any) {
       setError("Network error while saving")
     } finally {
       setSaving(false)

@@ -21,7 +21,7 @@ export default function CertificationsAdmin() {
       if (res.ok) {
         setCertifications(await res.json())
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error("Failed to fetch certifications", err)
     } finally {
       setLoading(false)
@@ -37,7 +37,7 @@ export default function CertificationsAdmin() {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchCertifications()
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
     }
   }

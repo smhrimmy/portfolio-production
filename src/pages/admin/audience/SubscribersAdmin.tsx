@@ -21,7 +21,7 @@ export default function SubscribersAdmin() {
       if (res.ok) {
         setSubscribers(await res.json())
       }
-    } catch (_err) {
+    } catch (err: any) {
       console.error("Failed to fetch", err)
     } finally {
       setLoading(false)
@@ -37,7 +37,7 @@ export default function SubscribersAdmin() {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchSubscribers()
-    } catch (_err) {
+    } catch (err: any) {
       console.error(err)
     }
   }
