@@ -1,162 +1,159 @@
+import MiniSearch from "minisearch"
 import { type SearchDocument, type SearchResult } from "../types/search"
-import { getProjects } from "../data/projects"
-import { getArticles } from "../data/articles"
-import { getExperience } from "../data/experience"
-import { getSkills } from "../data/skills"
-import { getCertifications } from "../data/certifications"
 
+let publicSearchIndex: MiniSearch<SearchDocument> | null = null
 let searchIndexCache: SearchDocument[] | null = null
 
 export async function buildSearchIndex(): Promise<SearchDocument[]> {
-  if (searchIndexCache) return searchIndexCache
+  if (searchIndexCache && publicSearchIndex) return searchIndexCache
 
-  const [projects, articles, experience, skills, certifications] = await Promise.all([
-    getProjects(),
-    getArticles(),
-    getExperience(),
-    getSkills(),
-    getCertifications()
-  ])
+  const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
 
-  const docs: SearchDocument[] = []
+  try {
+    const [projectsRes, articlesRes, skillsRes, certsRes] = await Promise.all([
+      fetch(`${apiUrl}/api/public/projects`),
+      fetch(`${apiUrl}/api/public/articles`),
+      fetch(`${apiUrl}/api/public/skills`),
+      fetch(`${apiUrl}/api/public/certifications`)
+    ])
 
-  // Map Projects
-  projects.forEach(p => {
-    docs.push({
-      id: `proj_${p.id}`,
-      type: "Project",
-      title: p.title,
-      description: p.shortDescription,
-      url: `/projects/${p.slug}`,
-      technologies: p.technologies,
-    })
-  })
+    const projects = projectsRes.ok ? await projectsRes.json() : []
+    const articles = articlesRes.ok ? await articlesRes.json() : []
+    const skills = skillsRes.ok ? await skillsRes.json() : []
+    const certs = certsRes.ok ? await certsRes.json() : []
 
-  // Map Articles
-  articles.forEach(a => {
-    docs.push({
-      id: `art_${a.id}`,
-      type: "Article",
-      title: a.title,
-      description: a.excerpt,
-      url: `/writing/${a.slug}`,
-      category: a.category,
-      tags: a.tags,
-    })
-  })
+    const docs: SearchDocument[] = []
 
-  // Map Experience
-  experience.forEach(e => {
-    docs.push({
-      id: `exp_${e.id}`,
-      type: "Experience",
-      title: `${e.role} at ${e.company}`,
-      description: e.summary,
-      url: "/experience",
-      technologies: e.technologies,
-    })
-  })
-
-  // Map Skills
-  skills.forEach(s => {
-    docs.push({
-      id: `skill_${s.id}`,
-      type: "Skill",
-      title: s.name,
-      url: "/skills",
-      technologies: s.technologies,
-    })
-  })
-
-  // Map Certifications
-  certifications.forEach(c => {
-    docs.push({
-      id: `cert_${c.id}`,
-      type: "Certification",
-      title: c.name,
-      description: c.issuer,
-      url: "/certifications",
-      category: c.category,
-      tags: c.skills,
-    })
-  })
-
-  // Static Pages
-  const pages = [
-    { title: "Home", url: "/", desc: "Homepage and featured highlights" },
-    { title: "About", url: "/about", desc: "Professional background and approach" },
-    { title: "Projects", url: "/projects", desc: "Selected software engineering work" },
-    { title: "Experience", url: "/experience", desc: "Career history and roles" },
-    { title: "Writing", url: "/writing", desc: "Articles, tutorials, and case studies" },
-    { title: "Skills", url: "/skills", desc: "Technology matrix and core capabilities" },
-    { title: "Certifications", url: "/certifications", desc: "Formal credentials and education" },
-    { title: "Resume", url: "/resume", desc: "Professional resume and PDF download" },
-    { title: "Contact", url: "/contact", desc: "Get in touch and find social links" },
-  ]
-
-  pages.forEach(p => {
-    docs.push({
-      id: `page_${p.title.toLowerCase()}`,
-      type: "Page",
-      title: p.title,
-      description: p.desc,
-      url: p.url,
-    })
-  })
-
-  searchIndexCache = docs
-  return docs
-}
-
-function normalize(str: string): string {
-  return str.toLowerCase().trim().replace(/[^a-z0-9]/g, "")
-}
-
-export function performSearch(query: string, index: SearchDocument[]): SearchResult[] {
-  if (!query.trim()) return []
-
-  const normalizedQuery = query.toLowerCase().trim()
-  const exactQuery = normalize(query)
-
-  const results = index.map(doc => {
-    let score = 0
-    const title = doc.title.toLowerCase()
-    
-    // Exact title match (normalized)
-    if (normalize(doc.title) === exactQuery) {
-      score += 100
-    }
-    // Prefix match
-    else if (title.startsWith(normalizedQuery)) {
-      score += 90
-    }
-    // Keyword match
-    else if (title.includes(normalizedQuery)) {
-      score += 80
+    if (Array.isArray(projects)) {
+      projects.forEach(p => {
+        docs.push({
+          id: `proj_${p.id}`,
+          type: "Project",
+          title: p.title,
+          description: p.excerpt || p.content,
+          url: `/projects/${p.slug}`,
+          category: p.category,
+          tags: p.tags,
+        })
+      })
     }
 
-    // Description match
-    if (doc.description && doc.description.toLowerCase().includes(normalizedQuery)) {
-      score += 50
+    if (Array.isArray(articles)) {
+      articles.forEach(a => {
+        docs.push({
+          id: `art_${a.id}`,
+          type: "Article",
+          title: a.title,
+          description: a.excerpt || a.content,
+          url: `/writing/${a.slug}`,
+          category: a.category,
+          tags: a.tags,
+        })
+      })
     }
 
-    // Category / Tags match
-    if (doc.category && doc.category.toLowerCase().includes(normalizedQuery)) {
-      score += 60
-    }
-    if (doc.tags && doc.tags.some(t => t.toLowerCase().includes(normalizedQuery))) {
-      score += 60
+    if (Array.isArray(skills)) {
+      skills.forEach(s => {
+        docs.push({
+          id: `skill_${s.id}`,
+          type: "Skill",
+          title: s.name,
+          description: s.category,
+          url: "/skills",
+          category: s.category,
+        })
+      })
     }
     
-    // Tech match
-    if (doc.technologies && doc.technologies.some(t => t.toLowerCase().includes(normalizedQuery))) {
-      score += 50
+    if (Array.isArray(certs)) {
+      certs.forEach(c => {
+        docs.push({
+          id: `cert_${c.id}`,
+          type: "Certification",
+          title: c.name,
+          description: c.issuer,
+          url: "/certifications",
+          category: c.category,
+        })
+      })
     }
 
-    return { ...doc, score }
+    // Static Pages
+    const pages = [
+      { title: "Home", url: "/", desc: "Homepage and featured highlights" },
+      { title: "About", url: "/about", desc: "Professional background and approach" },
+      { title: "Projects", url: "/projects", desc: "Selected software engineering work" },
+      { title: "Experience", url: "/experience", desc: "Career history and roles" },
+      { title: "Writing", url: "/writing", desc: "Articles, tutorials, and case studies" },
+      { title: "Skills", url: "/skills", desc: "Technology matrix and core capabilities" },
+      { title: "Certifications", url: "/certifications", desc: "Formal credentials and education" },
+      { title: "Resume", url: "/resume", desc: "Professional resume and PDF download" },
+      { title: "Contact", url: "/contact", desc: "Get in touch and find social links" },
+    ]
+
+    pages.forEach(p => {
+      docs.push({
+        id: `page_${p.title.toLowerCase()}`,
+        type: "Page",
+        title: p.title,
+        description: p.desc,
+        url: p.url,
+      })
+    })
+
+    searchIndexCache = docs
+
+    // Initialize Minisearch
+    publicSearchIndex = new MiniSearch({
+      fields: ['title', 'description', 'category', 'tags'],
+      storeFields: ['title', 'description', 'url', 'type', 'category', 'tags']
+    })
+    
+    publicSearchIndex.addAll(docs)
+
+    return docs
+  } catch (error) {
+    console.error("Failed to build public search index:", error)
+    return []
+  }
+}
+
+export function performSearch(query: string, _index: SearchDocument[]): SearchResult[] {
+  if (!query.trim() || !publicSearchIndex) return []
+
+  const lowerQuery = query.toLowerCase()
+
+  // Intent parsing (e.g., "projects using react")
+  let typeFilter = ""
+  if (lowerQuery.includes("project")) typeFilter = "Project"
+  else if (lowerQuery.includes("article") || lowerQuery.includes("post")) typeFilter = "Article"
+  else if (lowerQuery.includes("skill")) typeFilter = "Skill"
+  
+  // Extract core search term if intent-based
+  let searchTerm = query
+  const match = lowerQuery.match(/(projects|articles|posts) (using|with|about) (.*)/)
+  if (match && match[3]) {
+    searchTerm = match[3]
+  }
+
+  const results = publicSearchIndex.search(searchTerm, {
+    fuzzy: 0.2,
+    prefix: true,
+    filter: (result) => {
+      if (typeFilter && result.type !== typeFilter) return false
+      return true
+    }
   })
 
-  return results
-    .filter(r => r.score > 0)
-    .sort((a, b) => b.score - a.score)
+  // Format and cast back to our component expectations
+  return results.map(r => ({
+    id: r.id,
+    type: r.type as any, // Cast to SearchCategory
+    title: r.title,
+    description: r.description,
+    url: r.url,
+    category: r.category,
+    tags: r.tags,
+    score: r.score
+  }))
 }

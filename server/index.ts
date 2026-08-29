@@ -100,6 +100,8 @@ import { publicProfileRouter } from "./routes/public/profile.js"
 import { adminThemeRouter } from "./routes/admin/theme.js"
 import { publicThemeRouter } from "./routes/public/theme.js"
 
+import { publicProjectsRouter } from "./routes/public/projects.js"
+
 // Authentication Routes
 app.use("/api/auth", authRouter)
 
@@ -109,6 +111,7 @@ app.use("/robots.txt", (req, res, next) => { req.url = "/robots.txt"; publicSeoR
 
 // Public Routes
 app.use("/api/public/profile", publicProfileRouter)
+app.use("/api/public/projects", publicProjectsRouter)
 app.use("/api/public/articles", publicArticlesRouter)
 app.use("/api/public/skills", publicSkillsRouter)
 app.use("/api/public/certifications", publicCertificationsRouter)
@@ -121,6 +124,7 @@ app.use("/api/public/analytics", publicAnalyticsRouter)
 app.use("/api/public/theme", publicThemeRouter)
 
 import { adminCronRouter } from "./routes/admin/cron.js"
+import { adminSitesRouter } from "./routes/admin/sites.js"
 
 // Protected Admin Routes
 const adminRouter = express.Router()
@@ -149,6 +153,7 @@ adminRouter.use("/github", adminGithubRouter)
 adminRouter.use("/experiments", adminExperimentsRouter)
 adminRouter.use("/analytics", adminAnalyticsRouter)
 adminRouter.use("/theme", adminThemeRouter)
+adminRouter.use("/sites", adminSitesRouter)
 
 app.use("/api/admin", adminRouter)
 

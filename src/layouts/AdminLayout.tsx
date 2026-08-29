@@ -3,6 +3,8 @@ import { motion } from "framer-motion"
 import { LayoutDashboard, Users, FolderKanban, Briefcase, Award, PenTool, LayoutTemplate, MessageSquare, Settings, LogOut, Bot, Image, Square, Globe, Search, Code, Beaker, BarChart } from "lucide-react"
 import { useAuthStore } from "../stores/authStore"
 import { AnalyticsTracker } from "../components/AnalyticsTracker"
+import { IntelligencePanel } from "../components/admin/IntelligencePanel"
+import { SiteSwitcher } from "../components/admin/SiteSwitcher"
 
 const NAV_ITEMS = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -38,11 +40,14 @@ export function AdminLayout() {
       <AnalyticsTracker />
       {/* Sidebar */}
       <aside className="w-64 border-r border-neutral-800 bg-neutral-900/50 flex flex-col h-full">
-        <div className="p-6 border-b border-neutral-800 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-sm">
-            OS
+        <div className="p-6 border-b border-neutral-800 flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-sm">
+              OS
+            </div>
+            <span className="font-semibold tracking-wide uppercase text-sm text-neutral-300">Portfolio OS</span>
           </div>
-          <span className="font-semibold tracking-wide uppercase text-sm text-neutral-300">Portfolio OS</span>
+          <SiteSwitcher />
         </div>
 
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
@@ -95,6 +100,8 @@ export function AdminLayout() {
           <Outlet />
         </div>
       </main>
+      
+      <IntelligencePanel />
     </div>
   )
 }

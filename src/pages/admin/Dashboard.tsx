@@ -1,5 +1,6 @@
 import { motion } from "framer-motion"
 import { Activity, Users, Database, FileText, ArrowRight } from "lucide-react"
+import { InsightsDigest } from "../../components/admin/InsightsDigest"
 
 export default function Dashboard() {
   const stats = [
@@ -15,6 +16,8 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold tracking-tight text-neutral-50">Dashboard</h1>
         <p className="text-neutral-400 mt-2">Welcome to your Portfolio OS Control Center.</p>
       </div>
+
+      <InsightsDigest />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (

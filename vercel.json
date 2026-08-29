@@ -12,7 +12,7 @@
   "crons": [
     {
       "path": "/api/admin/cron/tick",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
