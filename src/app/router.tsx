@@ -23,6 +23,8 @@ import ArticlesAdmin from "../pages/admin/content/ArticlesAdmin"
 import SkillsAdmin from "../pages/admin/content/SkillsAdmin"
 import CertificationsAdmin from "../pages/admin/content/CertificationsAdmin"
 import SitesAdmin from "../pages/admin/content/SitesAdmin"
+import TestimonialsAdmin from "../pages/admin/content/TestimonialsAdmin"
+import SubscribersAdmin from "../pages/admin/audience/SubscribersAdmin"
 import PublishingDashboard from "../pages/admin/content/PublishingDashboard"
 import ThemeStudio from "../pages/admin/design/ThemeStudio"
 import AiStudio from "../pages/admin/ai/AiStudio"
@@ -109,6 +111,14 @@ export const router = createBrowserRouter([
       {
         path: "content/certifications",
         element: <CertificationsAdmin />
+      },
+      {
+        path: "content/testimonials",
+        element: <TestimonialsAdmin />
+      },
+      {
+        path: "audience/subscribers",
+        element: <SubscribersAdmin />
       },
       {
         path: "design/theme",

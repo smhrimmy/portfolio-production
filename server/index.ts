@@ -126,6 +126,16 @@ app.use("/api/public/theme", publicThemeRouter)
 import { adminCronRouter } from "./routes/admin/cron.js"
 import { adminSitesRouter } from "./routes/admin/sites.js"
 import { adminAuditRouter } from "./routes/admin/audit.js"
+import { adminTestimonialsRouter } from "./routes/admin/testimonials.js"
+import { adminSubscribersRouter } from "./routes/admin/subscribers.js"
+
+// Public API Routes
+import { publicNewsletterRouter } from "./routes/public/newsletter.js"
+
+const publicRouter = express.Router()
+publicRouter.use("/projects", publicProjectsRouter)
+publicRouter.use("/newsletter", publicNewsletterRouter)
+app.use("/api/public", publicRouter)
 
 // Protected Admin Routes
 const adminRouter = express.Router()
@@ -156,6 +166,8 @@ adminRouter.use("/analytics", adminAnalyticsRouter)
 adminRouter.use("/theme", adminThemeRouter)
 adminRouter.use("/sites", adminSitesRouter)
 adminRouter.use("/audit", adminAuditRouter)
+adminRouter.use("/testimonials", adminTestimonialsRouter)
+adminRouter.use("/subscribers", adminSubscribersRouter)
 
 app.use("/api/admin", adminRouter)
 

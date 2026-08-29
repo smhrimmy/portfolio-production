@@ -19,6 +19,8 @@ const NAV_ITEMS = [
   { name: "Skills", path: "/admin/content/skills", icon: Square },
   { name: "Certifications", path: "/admin/content/certifications", icon: Award },
   { name: "Articles", path: "/admin/content/articles", icon: PenTool },
+  { name: "Testimonials", path: "/admin/content/testimonials", icon: MessageSquare },
+  { name: "Subscribers", path: "/admin/audience/subscribers", icon: Users },
   { name: "Theme Studio", path: "/admin/design/theme", icon: LayoutTemplate },
   { name: "SEO Studio", path: "/admin/seo", icon: Search },
   { name: "GitHub Integration", path: "/admin/github", icon: Code },
