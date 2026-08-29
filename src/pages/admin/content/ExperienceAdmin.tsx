@@ -9,6 +9,7 @@ export default function ExperienceAdmin() {
 
   useEffect(() => {
     fetchExperiences()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchExperiences = async () => {
@@ -20,7 +21,7 @@ export default function ExperienceAdmin() {
       if (res.ok) {
         setExperiences(await res.json())
       }
-    } catch (err) {
+    } catch (_err) {
       console.error("Failed to fetch experiences", err)
     } finally {
       setLoading(false)
@@ -36,7 +37,7 @@ export default function ExperienceAdmin() {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchExperiences()
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
     }
   }

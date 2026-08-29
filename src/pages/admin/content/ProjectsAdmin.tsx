@@ -20,6 +20,7 @@ export default function ProjectsAdmin() {
 
   useEffect(() => {
     fetchProjects()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchProjects = async () => {
@@ -34,7 +35,7 @@ export default function ProjectsAdmin() {
         const data = await res.json()
         setProjects(data)
       }
-    } catch (err) {
+    } catch (_err) {
       console.error("Failed to fetch projects", err)
     } finally {
       setLoading(false)

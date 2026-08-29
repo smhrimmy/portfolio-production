@@ -13,6 +13,7 @@ export default function SettingsAdmin() {
 
   useEffect(() => {
     fetchSettings()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchSettings = async () => {
@@ -26,7 +27,7 @@ export default function SettingsAdmin() {
       } else {
         setMessage({ type: "error", text: "Failed to load settings" })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Network error loading settings" })
     } finally {
       setLoading(false)
@@ -52,7 +53,7 @@ export default function SettingsAdmin() {
       } else {
         setMessage({ type: "error", text: "Failed to save draft" })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Network error saving settings" })
     } finally {
       setSaving(false)
@@ -74,7 +75,7 @@ export default function SettingsAdmin() {
       } else {
         setMessage({ type: "error", text: "Failed to publish settings" })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Network error publishing settings" })
     } finally {
       setPublishing(false)

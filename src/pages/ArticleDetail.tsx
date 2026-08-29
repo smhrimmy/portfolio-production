@@ -6,6 +6,7 @@ import { getArticleBySlug } from "../data/articles"
 import type { Article } from "../types/article"
 import { Helmet } from "react-helmet-async"
 import { ArrowLeft } from "lucide-react"
+import DOMPurify from "dompurify"
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -100,7 +101,7 @@ export default function ArticleDetail() {
             <motion.div 
               variants={fadeInUp} 
               className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
-              dangerouslySetInnerHTML={{ __html: article.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
             />
             
             {article.tags && article.tags.length > 0 && (

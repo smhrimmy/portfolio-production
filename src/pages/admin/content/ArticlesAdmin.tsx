@@ -46,6 +46,7 @@ export default function ArticlesAdmin() {
 
   useEffect(() => {
     fetchArticles()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchArticles = async () => {
@@ -57,7 +58,7 @@ export default function ArticlesAdmin() {
       if (res.ok) {
         setArticles(await res.json())
       }
-    } catch (err) {
+    } catch (_err) {
       console.error("Failed to fetch articles", err)
     } finally {
       setLoading(false)
@@ -73,7 +74,7 @@ export default function ArticlesAdmin() {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchArticles()
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
     }
   }
@@ -138,7 +139,7 @@ export default function ArticlesAdmin() {
         const error = await res.json()
         toast.error(`Error: ${error.error?.message || "Failed to save"}`)
       }
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
       toast.error("Network error while saving")
     }
@@ -172,7 +173,7 @@ export default function ArticlesAdmin() {
       } else {
         toast.error(`AI Error: ${data.error?.message}`)
       }
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
       toast.error("Failed to generate AI content")
     } finally {
@@ -206,7 +207,7 @@ export default function ArticlesAdmin() {
       } else {
         toast.error(`AI Error: ${data.error?.message}`)
       }
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
       toast.error("Failed to generate SEO metadata")
     } finally {

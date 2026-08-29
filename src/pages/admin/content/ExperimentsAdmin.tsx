@@ -11,6 +11,7 @@ export default function ExperimentsAdmin() {
 
   useEffect(() => {
     fetchExperiments()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchExperiments = async () => {
@@ -19,7 +20,7 @@ export default function ExperimentsAdmin() {
         headers: { "Authorization": `Bearer ${token}` }
       })
       if (res.ok) setExperiments(await res.json())
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
     } finally {
       setLoading(false)
@@ -34,7 +35,7 @@ export default function ExperimentsAdmin() {
         headers: { "Authorization": `Bearer ${token}` }
       })
       setExperiments(experiments.filter(e => e.id !== id))
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
     }
   }

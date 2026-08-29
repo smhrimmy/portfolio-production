@@ -9,6 +9,7 @@ export default function SubscribersAdmin() {
 
   useEffect(() => {
     fetchSubscribers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchSubscribers = async () => {
@@ -20,7 +21,7 @@ export default function SubscribersAdmin() {
       if (res.ok) {
         setSubscribers(await res.json())
       }
-    } catch (err) {
+    } catch (_err) {
       console.error("Failed to fetch", err)
     } finally {
       setLoading(false)
@@ -36,7 +37,7 @@ export default function SubscribersAdmin() {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchSubscribers()
-    } catch (err) {
+    } catch (_err) {
       console.error(err)
     }
   }

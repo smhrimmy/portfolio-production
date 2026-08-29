@@ -110,6 +110,7 @@ app.use("/sitemap.xml", (req, res, next) => { req.url = "/sitemap.xml"; publicSe
 app.use("/robots.txt", (req, res, next) => { req.url = "/robots.txt"; publicSeoRouter(req, res, next) })
 
 // Public Routes
+app.use("/api/public", rateLimiter)
 app.use("/api/public/profile", publicProfileRouter)
 app.use("/api/public/projects", publicProjectsRouter)
 app.use("/api/public/articles", publicArticlesRouter)
@@ -134,6 +135,9 @@ import { adminBackupRouter } from "./routes/admin/backup.js"
 import { publicNewsletterRouter } from "./routes/public/newsletter.js"
 
 const publicRouter = express.Router()
+// Global DDoS Protection for public endpoints
+publicRouter.use(rateLimiter)
+
 publicRouter.use("/projects", publicProjectsRouter)
 publicRouter.use("/newsletter", publicNewsletterRouter)
 app.use("/api/public", publicRouter)

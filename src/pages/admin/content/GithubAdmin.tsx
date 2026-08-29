@@ -13,6 +13,7 @@ export default function GithubAdmin() {
 
   useEffect(() => {
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchData = async () => {
@@ -24,7 +25,7 @@ export default function GithubAdmin() {
 
       if (configRes.ok) setConfig(await configRes.json())
       if (reposRes.ok) setRepos(await reposRes.json())
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Failed to load GitHub data" })
     } finally {
       setLoading(false)
@@ -49,7 +50,7 @@ export default function GithubAdmin() {
         const error = await res.json()
         setMessage({ type: "error", text: error.error?.message || "Failed to save configuration" })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Network error" })
     }
   }
@@ -72,7 +73,7 @@ export default function GithubAdmin() {
         const error = await res.json()
         setMessage({ type: "error", text: error.error?.message || "Failed to sync repositories" })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Network error during sync" })
     } finally {
       setSyncing(false)
@@ -93,7 +94,7 @@ export default function GithubAdmin() {
         const updated = await res.json()
         setRepos(repos.map(r => r.id === id ? updated : r))
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Failed to update repository" })
     }
   }
@@ -113,7 +114,7 @@ export default function GithubAdmin() {
         const updated = await res.json()
         setRepos(repos.map(r => r.id === id ? updated : r))
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Failed to update repository visibility" })
     }
   }

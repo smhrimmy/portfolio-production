@@ -11,6 +11,7 @@ export default function NavigationAdmin() {
 
   useEffect(() => {
     fetchItems()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchItems = async () => {
@@ -22,7 +23,7 @@ export default function NavigationAdmin() {
         const data = await res.json()
         setItems(data)
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Network error loading navigation" })
     } finally {
       setLoading(false)
@@ -40,7 +41,7 @@ export default function NavigationAdmin() {
         setItems(items.filter(i => i.id !== id))
         setMessage({ type: "success", text: "Item deleted successfully" })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Failed to delete item" })
     }
   }
@@ -56,7 +57,7 @@ export default function NavigationAdmin() {
         setItems(items.map(i => i.id === id ? updated : i))
         setMessage({ type: "success", text: "Item published successfully" })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage({ type: "error", text: "Failed to publish item" })
     }
   }
