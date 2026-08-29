@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { Plus, Edit2, Trash2, } from "lucide-react"
 import { useAuthStore } from "../../../stores/authStore"
 import { StatusBadge } from "../../../components/admin/ui/StatusBadge"
+import { Skeleton } from "../../../components/admin/ui/Skeleton"
+import { EmptyState } from "../../../components/admin/ui/EmptyState"
 
 interface Project {
   id: string
@@ -69,12 +71,25 @@ export default function ProjectsAdmin() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-neutral-500">Loading projects...</td>
-                </tr>
+                Array.from({ length: 3 }).map((_, i) => (
+                  <tr key={i} className="border-b border-neutral-800/50">
+                    <td className="px-6 py-4"><Skeleton className="h-5 w-48" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-5 w-24" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-20 rounded-full" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-24 rounded-full" /></td>
+                    <td className="px-6 py-4 text-right"><Skeleton className="h-5 w-12 ml-auto" /></td>
+                  </tr>
+                ))
               ) : projects.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-neutral-500">No projects found. Create one to get started.</td>
+                  <td colSpan={5} className="p-8">
+                    <EmptyState 
+                      title="No projects found" 
+                      description="Create your first project to showcase your work."
+                      actionText="New Project"
+                      onAction={() => {}}
+                    />
+                  </td>
                 </tr>
               ) : (
                 projects.map((project) => (

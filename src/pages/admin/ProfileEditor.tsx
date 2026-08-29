@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Save, CheckCircle, AlertCircle, Globe } from "lucide-react"
 import { useAuthStore } from "../../stores/authStore"
+import { useFormGuard } from "../../hooks/useFormGuard"
 
 export function ProfileEditor() {
   const [profile, setProfile] = useState<any>(null)
@@ -8,11 +9,16 @@ export function ProfileEditor() {
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
   const [message, setMessage] = useState({ type: "", text: "" })
+  const [isDirty, setIsDirty] = useState(false)
+  
   const { token } = useAuthStore()
   const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
 
+  useFormGuard(isDirty)
+
   useEffect(() => {
     fetchProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchProfile = async () => {
@@ -51,6 +57,7 @@ export function ProfileEditor() {
         const data = await res.json()
         setProfile(data)
         setMessage({ type: "success", text: "Draft saved successfully" })
+        setIsDirty(false)
       } else {
         setMessage({ type: "error", text: "Failed to save draft" })
       }
@@ -75,6 +82,7 @@ export function ProfileEditor() {
         const data = await res.json()
         setProfile(data)
         setMessage({ type: "success", text: "Profile published successfully" })
+        setIsDirty(false)
       } else {
         setMessage({ type: "error", text: "Failed to publish profile" })
       }
@@ -88,6 +96,7 @@ export function ProfileEditor() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setProfile((prev: any) => ({ ...prev, [name]: value }))
+    setIsDirty(true)
   }
 
   if (loading) {
