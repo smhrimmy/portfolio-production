@@ -13,6 +13,11 @@ const THEMES: { id: PortfolioTheme; name: string; description: string; colors: s
   { id: "cyberpunk", name: "Cyberpunk", description: "Neon, high-contrast aesthetics.", colors: ["bg-fuchsia-500", "bg-black"] },
   { id: "glass-os", name: "Glass OS", description: "Frosted glassmorphism interface.", colors: ["bg-white/10", "bg-black"] },
   { id: "terminal-ide", name: "Terminal IDE", description: "Code editor aesthetics.", colors: ["bg-green-500", "bg-neutral-950"] },
+  { id: "editorial", name: "PDL Editorial", description: "Magazine-style, large serif, grid typography.", colors: ["bg-orange-50", "bg-neutral-900"] },
+  { id: "brutalist", name: "PDL Brutalist", description: "Raw borders, bold typography, high contrast.", colors: ["bg-white", "bg-black border-2 border-black"] },
+  { id: "luxury", name: "PDL Luxury", description: "Dark, serif, gold accent, generous spacing.", colors: ["bg-amber-500", "bg-neutral-950"] },
+  { id: "timeline", name: "PDL Timeline", description: "Scroll-driven chronological layout.", colors: ["bg-neutral-100", "bg-neutral-800"] },
+  { id: "3d-spatial", name: "PDL 3D Spatial", description: "WebGL interactive starfield background.", colors: ["bg-neutral-950", "bg-indigo-500"] },
 ]
 
 export default function ThemeStudio() {

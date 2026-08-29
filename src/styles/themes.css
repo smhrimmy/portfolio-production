@@ -1,0 +1,123 @@
+@layer base {
+  /* PDL Glass OS */
+  .theme-glass-os {
+    --background: 220 20% 95%;
+    --surface: 220 20% 100% / 0.6;
+    --radius: 1.5rem;
+    --border: 220 10% 85% / 0.3;
+  }
+  .dark.theme-glass-os {
+    --background: 220 20% 10%;
+    --surface: 220 20% 15% / 0.6;
+    --border: 220 10% 30% / 0.3;
+  }
+  .theme-glass-os * {
+    backdrop-filter: blur(12px);
+  }
+
+  /* PDL Terminal IDE */
+  .theme-terminal-ide {
+    --background: 220 10% 5%;
+    --foreground: 120 100% 50%; /* Neon Green */
+    --surface: 220 10% 8%;
+    --border: 120 100% 50%;
+    --radius: 0px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  }
+  .theme-terminal-ide.light {
+    --background: 220 10% 95%;
+    --foreground: 120 80% 30%;
+    --surface: 220 10% 90%;
+    --border: 120 80% 30%;
+  }
+
+  /* PDL Editorial */
+  .theme-editorial {
+    --background: 35 30% 96%; /* Warm paper */
+    --foreground: 20 20% 15%;
+    --surface: 0 0% 100%;
+    --border: 20 10% 80%;
+    --radius: 0.25rem;
+    font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
+  }
+  .dark.theme-editorial {
+    --background: 20 20% 10%;
+    --foreground: 35 30% 90%;
+    --surface: 20 20% 15%;
+    --border: 20 10% 30%;
+  }
+
+  /* PDL Brutalist */
+  .theme-brutalist {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --surface: 0 0% 100%;
+    --border: 0 0% 0%;
+    --radius: 0px;
+    font-weight: 700;
+  }
+  .theme-brutalist * {
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    border-width: 2px;
+  }
+  .dark.theme-brutalist {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --border: 0 0% 100%;
+  }
+  .dark.theme-brutalist * {
+    box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
+  }
+
+  /* PDL Luxury */
+  .theme-luxury {
+    --background: 210 20% 98%;
+    --foreground: 210 30% 20%;
+    --primary: 43 74% 49%; /* Gold */
+    --surface: 0 0% 100%;
+    --border: 43 74% 80%;
+    --radius: 0.125rem;
+    font-family: "Didot", "Bodoni MT", "Times New Roman", serif !important;
+    letter-spacing: 0.05em;
+  }
+  .dark.theme-luxury {
+    --background: 220 20% 5%;
+    --foreground: 43 50% 90%;
+    --primary: 43 74% 49%; /* Gold */
+    --surface: 220 20% 10%;
+    --border: 43 30% 30%;
+  }
+
+  /* PDL Timeline */
+  .theme-timeline {
+    --background: 0 0% 95%;
+    --foreground: 0 0% 10%;
+    --surface: 0 0% 100%;
+    --radius: 2rem;
+  }
+  .dark.theme-timeline {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 90%;
+    --surface: 0 0% 15%;
+  }
+  .theme-timeline .timeline-container {
+    border-left: 2px solid hsl(var(--border));
+    padding-left: 1rem;
+    margin-left: 1rem;
+  }
+
+  /* PDL 3D Spatial */
+  .theme-3d-spatial {
+    --background: transparent;
+    --foreground: 0 0% 98%;
+    --surface: 240 5% 10% / 0.5;
+    --border: 240 10% 20% / 0.5;
+    --radius: 1rem;
+  }
+  .dark.theme-3d-spatial {
+    --background: transparent;
+  }
+  .theme-3d-spatial body {
+    background-color: transparent !important;
+  }
+}

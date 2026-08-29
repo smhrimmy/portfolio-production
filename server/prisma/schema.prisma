@@ -229,6 +229,9 @@ model SiteSettings {
   publishStatus String    @default("draft")
   publishDate   DateTime?
   version       Int       @default(1)
+
+  autoPublishEnabled Boolean @default(false)
+  autoPublishDelay   Int     @default(10) // in minutes
 }
 
 model SeoRoute {

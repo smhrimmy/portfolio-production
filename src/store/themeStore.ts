@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export type Theme = 'system' | 'light' | 'dark'
-export type PortfolioTheme = 'premium-editorial' | 'classic' | 'minimal' | 'bento' | 'cyberpunk' | 'glass-os' | 'terminal-ide'
+export type PortfolioTheme = 'premium-editorial' | 'classic' | 'minimal' | 'bento' | 'cyberpunk' | 'glass-os' | 'terminal-ide' | 'editorial' | 'brutalist' | 'luxury' | 'timeline' | '3d-spatial'
 
 interface ThemeState {
   colorMode: Theme

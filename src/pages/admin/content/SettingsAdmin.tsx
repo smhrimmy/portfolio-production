@@ -222,6 +222,44 @@ export default function SettingsAdmin() {
               </div>
             </div>
           </div>
+
+          <div className="mt-8 pt-6 border-t border-neutral-800">
+            <h2 className="text-lg font-bold text-neutral-200 mb-4 flex items-center gap-2">
+              Automation Layer
+            </h2>
+            <div className="flex items-start gap-4 p-4 bg-neutral-950 border border-neutral-800 rounded-lg">
+              <label className="relative inline-flex items-center cursor-pointer mt-1">
+                <input
+                  type="checkbox"
+                  name="autoPublishEnabled"
+                  checked={settings?.autoPublishEnabled || false}
+                  onChange={(e) => setSettings((prev: any) => ({ ...prev, autoPublishEnabled: e.target.checked }))}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+              </label>
+              <div>
+                <h3 className="font-semibold text-neutral-200">Auto-Publish Drafts</h3>
+                <p className="text-sm text-neutral-400 mt-1">
+                  When enabled, the system will automatically publish drafts that have been inactive for the configured quiet period. 
+                  (Requires Vercel Cron to be active).
+                </p>
+                
+                {settings?.autoPublishEnabled && (
+                  <div className="mt-4 flex items-center gap-3">
+                    <label className="text-sm text-neutral-300">Quiet Period (Minutes):</label>
+                    <input 
+                      type="number" 
+                      name="autoPublishDelay"
+                      value={settings?.autoPublishDelay || 10}
+                      onChange={handleChange}
+                      className="bg-neutral-900 border border-neutral-700 rounded px-3 py-1 text-white w-24"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
         
         <div className="px-6 py-4 bg-neutral-900 border-t border-neutral-800 flex justify-end space-x-3">

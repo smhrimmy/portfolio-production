@@ -1,5 +1,7 @@
-import React, { useEffect } from "react"
+import React, { useEffect, Suspense } from "react"
 import { useThemeStore } from "../../store/themeStore"
+
+const SpatialScene = React.lazy(() => import("../../components/3d/SpatialScene"))
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { colorMode, portfolioTheme, primaryColor, bgColor, fontFamily, borderRadius } = useThemeStore()
@@ -17,7 +19,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       "theme-bento",
       "theme-cyberpunk",
       "theme-glass-os",
-      "theme-terminal-ide"
+      "theme-terminal-ide",
+      "theme-editorial",
+      "theme-brutalist",
+      "theme-luxury",
+      "theme-timeline",
+      "theme-3d-spatial"
     )
 
     // Apply color mode
@@ -48,5 +55,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   }, [colorMode, portfolioTheme, primaryColor, bgColor, fontFamily, borderRadius])
 
-  return <>{children}</>
+  return (
+    <>
+      {portfolioTheme === '3d-spatial' && (
+        <Suspense fallback={null}>
+          <SpatialScene />
+        </Suspense>
+      )}
+      {children}
+    </>
+  )
 }

@@ -120,8 +120,14 @@ app.use("/api/public/experiments", publicExperimentsRouter)
 app.use("/api/public/analytics", publicAnalyticsRouter)
 app.use("/api/public/theme", publicThemeRouter)
 
+import { adminCronRouter } from "./routes/admin/cron.js"
+
 // Protected Admin Routes
 const adminRouter = express.Router()
+
+// Mount cron endpoint BEFORE requireAdmin so it relies on CRON_SECRET instead of JWT
+adminRouter.use("/cron", adminCronRouter)
+
 adminRouter.use(requireAdmin)
 
 adminRouter.get("/health", (req, res) => {

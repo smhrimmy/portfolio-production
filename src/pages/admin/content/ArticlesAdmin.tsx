@@ -1,11 +1,31 @@
 import { useState, useEffect } from "react"
-import { Plus, Edit2, Trash2, Clock, EyeOff, Globe, PenTool } from "lucide-react"
+import { Plus, Edit2, Trash2, Clock, EyeOff, Globe, PenTool, Sparkles, X, Save } from "lucide-react"
 import { useAuthStore } from "../../../stores/authStore"
+import { toast } from "react-hot-toast"
 
 export default function ArticlesAdmin() {
   const [articles, setArticles] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const { token } = useAuthStore()
+
+  // Editor State
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [editingArticle, setEditingArticle] = useState<any>(null)
+  
+  // AI State
+  const [aiPrompt, setAiPrompt] = useState("")
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  // Draft State
+  const [draft, setDraft] = useState({
+    title: "",
+    slug: "",
+    excerpt: "",
+    content: "",
+    tags: "",
+    category: "Blog",
+    publishStatus: "draft"
+  })
 
   useEffect(() => {
     fetchArticles()
@@ -41,8 +61,142 @@ export default function ArticlesAdmin() {
     }
   }
 
+  const handleOpenEditor = (article?: any) => {
+    if (article) {
+      setEditingArticle(article)
+      setDraft({
+        title: article.title,
+        slug: article.slug,
+        excerpt: article.excerpt,
+        content: article.content,
+        tags: article.tags, // Assuming it's already a string or parseable
+        category: article.category,
+        publishStatus: article.publishStatus
+      })
+    } else {
+      setEditingArticle(null)
+      setDraft({
+        title: "",
+        slug: "",
+        excerpt: "",
+        content: "",
+        tags: "",
+        category: "Blog",
+        publishStatus: "draft"
+      })
+    }
+    setIsEditorOpen(true)
+  }
+
+  const handleSave = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const method = editingArticle ? "PUT" : "POST"
+      const url = editingArticle 
+        ? `${apiUrl}/api/admin/articles/${editingArticle.id}` 
+        : `${apiUrl}/api/admin/articles`
+
+      const payload = {
+        ...draft,
+        readingTime: Math.max(1, Math.ceil(draft.content.split(" ").length / 200)),
+        tags: Array.isArray(draft.tags) ? JSON.stringify(draft.tags) : draft.tags
+      }
+
+      const res = await fetch(url, {
+        method,
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (res.ok) {
+        toast.success("Article saved successfully!")
+        setIsEditorOpen(false)
+        fetchArticles()
+      } else {
+        const error = await res.json()
+        toast.error(`Error: ${error.error?.message || "Failed to save"}`)
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error("Network error while saving")
+    }
+  }
+
+  const handleAiGenerate = async () => {
+    if (!aiPrompt) return toast.error("Please enter a topic")
+    setIsGenerating(true)
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const res = await fetch(`${apiUrl}/api/admin/ai/generate-article`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ topic: aiPrompt })
+      })
+      
+      const data = await res.json()
+      if (res.ok) {
+        setDraft({
+          ...draft,
+          title: data.title || draft.title,
+          slug: data.slug || draft.slug,
+          excerpt: data.excerpt || draft.excerpt,
+          content: data.content || draft.content,
+          tags: Array.isArray(data.tags) ? JSON.stringify(data.tags) : draft.tags
+        })
+        toast.success("AI Draft generated! Please review before saving.")
+      } else {
+        toast.error(`AI Error: ${data.error?.message}`)
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error("Failed to generate AI content")
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  const handleAiSeo = async () => {
+    if (!draft.content) return toast.error("Content is empty")
+    setIsGenerating(true)
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const res = await fetch(`${apiUrl}/api/admin/ai/seo-assistant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ content: draft.content })
+      })
+      
+      const data = await res.json()
+      if (res.ok) {
+        setDraft({
+          ...draft,
+          title: data.title || draft.title,
+          excerpt: data.description || draft.excerpt,
+          tags: Array.isArray(data.keywords) ? JSON.stringify(data.keywords) : draft.tags
+        })
+        toast.success("SEO Metadata optimized!")
+      } else {
+        toast.error(`AI Error: ${data.error?.message}`)
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error("Failed to generate SEO metadata")
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-neutral-50 flex items-center gap-2">
@@ -50,7 +204,10 @@ export default function ArticlesAdmin() {
           </h1>
           <p className="text-neutral-400 mt-1">Manage your blog posts, guides, and writing.</p>
         </div>
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
+        <button 
+          onClick={() => handleOpenEditor()}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+        >
           <Plus className="w-4 h-4" />
           New Article
         </button>
@@ -109,7 +266,7 @@ export default function ArticlesAdmin() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3">
-                        <button className="text-neutral-500 hover:text-indigo-400 transition-colors" title="Edit">
+                        <button onClick={() => handleOpenEditor(article)} className="text-neutral-500 hover:text-indigo-400 transition-colors" title="Edit">
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(article.id)} className="text-neutral-500 hover:text-red-400 transition-colors" title="Delete">
@@ -124,6 +281,130 @@ export default function ArticlesAdmin() {
           </table>
         </div>
       </div>
+
+      {/* Editor Modal */}
+      {isEditorOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-xl w-full max-w-6xl h-[90vh] flex flex-col md:flex-row overflow-hidden shadow-2xl">
+            
+            {/* Editor Area */}
+            <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-neutral-100">
+                  {editingArticle ? "Edit Article" : "New Article"}
+                </h2>
+                <button onClick={() => setIsEditorOpen(false)} className="text-neutral-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-400 mb-1">Title</label>
+                <input 
+                  type="text" 
+                  value={draft.title} 
+                  onChange={e => setDraft({...draft, title: e.target.value})}
+                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-400 mb-1">Slug</label>
+                  <input 
+                    type="text" 
+                    value={draft.slug} 
+                    onChange={e => setDraft({...draft, slug: e.target.value})}
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-400 mb-1">Status</label>
+                  <select 
+                    value={draft.publishStatus} 
+                    onChange={e => setDraft({...draft, publishStatus: e.target.value})}
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200"
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-400 mb-1">Excerpt / Meta Description</label>
+                <textarea 
+                  value={draft.excerpt} 
+                  onChange={e => setDraft({...draft, excerpt: e.target.value})}
+                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200 h-20 resize-none"
+                />
+              </div>
+
+              <div className="flex-1 flex flex-col">
+                <label className="block text-sm font-medium text-neutral-400 mb-1 flex items-center justify-between">
+                  Content (Markdown)
+                </label>
+                <textarea 
+                  value={draft.content} 
+                  onChange={e => setDraft({...draft, content: e.target.value})}
+                  className="flex-1 w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-neutral-200 font-mono text-sm resize-none custom-scrollbar min-h-[300px]"
+                />
+              </div>
+            </div>
+
+            {/* AI Assistant Sidebar */}
+            <div className="w-full md:w-80 bg-neutral-950 border-l border-neutral-800 p-6 flex flex-col h-full overflow-y-auto">
+              <h3 className="text-lg font-bold text-neutral-200 mb-6 flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-fuchsia-400" /> AI Assistant
+              </h3>
+
+              <div className="space-y-6">
+                {/* Generate Draft */}
+                <div className="p-4 bg-neutral-900 rounded-lg border border-neutral-800">
+                  <h4 className="text-sm font-semibold text-neutral-300 mb-2">Generate Draft</h4>
+                  <p className="text-xs text-neutral-500 mb-3">Provide a topic and let AI write the first draft.</p>
+                  <textarea 
+                    placeholder="e.g. The benefits of React Server Components..."
+                    value={aiPrompt}
+                    onChange={e => setAiPrompt(e.target.value)}
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-md px-3 py-2 text-neutral-200 text-sm h-20 resize-none mb-3"
+                  />
+                  <button 
+                    onClick={handleAiGenerate}
+                    disabled={isGenerating}
+                    className="w-full bg-fuchsia-600/20 hover:bg-fuchsia-600/30 text-fuchsia-400 border border-fuchsia-500/30 px-3 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
+                  >
+                    {isGenerating ? "Generating..." : "Generate Post"}
+                  </button>
+                </div>
+
+                {/* SEO Optimization */}
+                <div className="p-4 bg-neutral-900 rounded-lg border border-neutral-800">
+                  <h4 className="text-sm font-semibold text-neutral-300 mb-2">SEO Optimizer</h4>
+                  <p className="text-xs text-neutral-500 mb-3">Analyzes your content to generate a strong title, meta description, and tags.</p>
+                  <button 
+                    onClick={handleAiSeo}
+                    disabled={isGenerating || !draft.content}
+                    className="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 px-3 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
+                  >
+                    Optimize Metadata
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-auto pt-6">
+                <button 
+                  onClick={handleSave}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Save className="w-4 h-4" /> Save Article
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   )
 }
