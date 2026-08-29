@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react"
-import { Plus, Edit2, Trash2, Clock, EyeOff, Globe, PenTool, Sparkles, X, Save } from "lucide-react"
+import { Plus, Edit2, Trash2, Clock, PenTool, Sparkles, X, Save } from "lucide-react"
 import { useAuthStore } from "../../../stores/authStore"
 import { toast } from "react-hot-toast"
+import { StatusBadge } from "../../../components/admin/ui/StatusBadge"
+import { useUndo } from "../../../hooks/useUndo"
+import { AuditTimeline } from "../../../components/admin/AuditTimeline"
 
 export default function ArticlesAdmin() {
   const [articles, setArticles] = useState<any[]>([])
@@ -16,16 +19,30 @@ export default function ArticlesAdmin() {
   const [aiPrompt, setAiPrompt] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
 
-  // Draft State
-  const [draft, setDraft] = useState({
+  const { state: draft, set: setDraft, undo, redo } = useUndo({
     title: "",
     slug: "",
     excerpt: "",
     content: "",
     tags: "",
     category: "Blog",
-    publishStatus: "draft"
+    publishStatus: "draft",
+    publishDate: null as string | null
   })
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        if (e.shiftKey) {
+          redo()
+        } else {
+          undo()
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [undo, redo])
 
   useEffect(() => {
     fetchArticles()
@@ -71,7 +88,8 @@ export default function ArticlesAdmin() {
         content: article.content,
         tags: article.tags, // Assuming it's already a string or parseable
         category: article.category,
-        publishStatus: article.publishStatus
+        publishStatus: article.publishStatus,
+        publishDate: article.publishDate
       })
     } else {
       setEditingArticle(null)
@@ -82,7 +100,8 @@ export default function ArticlesAdmin() {
         content: "",
         tags: "",
         category: "Blog",
-        publishStatus: "draft"
+        publishStatus: "draft",
+        publishDate: null
       })
     }
     setIsEditorOpen(true)
@@ -254,15 +273,7 @@ export default function ArticlesAdmin() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      {article.publishStatus === "published" ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-emerald-500/10 text-emerald-400">
-                          <Globe className="w-3 h-3" /> Published
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-amber-500/10 text-amber-400">
-                          <EyeOff className="w-3 h-3" /> Draft
-                        </span>
-                      )}
+                      <StatusBadge status={article.publishStatus} publishDate={article.publishDate} />
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3">
@@ -329,6 +340,15 @@ export default function ArticlesAdmin() {
                     <option value="published">Published</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-400 mb-1">Publish Date (Optional)</label>
+                  <input 
+                    type="datetime-local" 
+                    value={draft.publishDate ? new Date(draft.publishDate).toISOString().slice(0, 16) : ""} 
+                    onChange={e => setDraft({...draft, publishDate: e.target.value ? new Date(e.target.value).toISOString() : null})}
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-neutral-200"
+                  />
+                </div>
               </div>
 
               <div>
@@ -392,7 +412,10 @@ export default function ArticlesAdmin() {
                 </div>
               </div>
 
-              <div className="mt-auto pt-6">
+              <div className="mt-auto pt-6 space-y-4">
+                {editingArticle && (
+                  <AuditTimeline entity="Article" entityId={editingArticle.id} token={token} />
+                )}
                 <button 
                   onClick={handleSave}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"

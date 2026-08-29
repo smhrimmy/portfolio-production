@@ -34,8 +34,10 @@ adminProjectsRouter.get("/:id", async (req, res) => {
 adminProjectsRouter.post("/", async (req, res) => {
   try {
     const data = req.body
-    if (data.publishStatus === "published") {
+    if (data.publishStatus === "published" && !data.publishDate) {
       data.publishDate = new Date()
+    } else if (data.publishDate) {
+      data.publishDate = new Date(data.publishDate)
     }
     
     let skillsConnect = undefined;
@@ -76,9 +78,13 @@ adminProjectsRouter.put("/:id", async (req, res) => {
     // Auto-set publishDate if transitioning to published
     if (data.publishStatus === "published") {
       const existing = await prisma.project.findUnique({ where: { id: req.params.id } })
-      if (existing?.publishStatus !== "published") {
+      if (existing?.publishStatus !== "published" && !data.publishDate) {
         data.publishDate = new Date()
+      } else if (data.publishDate) {
+        data.publishDate = new Date(data.publishDate)
       }
+    } else if (data.publishDate) {
+      data.publishDate = new Date(data.publishDate)
     }
     
     // Increment version

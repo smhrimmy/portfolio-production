@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Plus, Edit2, Trash2, } from "lucide-react"
 import { useAuthStore } from "../../../stores/authStore"
+import { StatusBadge } from "../../../components/admin/ui/StatusBadge"
 
 interface Project {
   id: string
@@ -8,6 +9,8 @@ interface Project {
   status: string
   category: string
   featured: boolean
+  publishStatus: string
+  publishDate: string | null
 }
 
 export default function ProjectsAdmin() {
@@ -58,18 +61,19 @@ export default function ProjectsAdmin() {
               <tr>
                 <th className="px-6 py-4 font-medium">Title</th>
                 <th className="px-6 py-4 font-medium">Category</th>
-                <th className="px-6 py-4 font-medium">Status</th>
+                <th className="px-6 py-4 font-medium">Dev Status</th>
+                <th className="px-6 py-4 font-medium">Publish Status</th>
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-8 text-center text-neutral-500">Loading projects...</td>
+                  <td colSpan={5} className="px-6 py-8 text-center text-neutral-500">Loading projects...</td>
                 </tr>
               ) : projects.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-8 text-center text-neutral-500">No projects found. Create one to get started.</td>
+                  <td colSpan={5} className="px-6 py-8 text-center text-neutral-500">No projects found. Create one to get started.</td>
                 </tr>
               ) : (
                 projects.map((project) => (
@@ -87,6 +91,9 @@ export default function ProjectsAdmin() {
                       }`}>
                         {project.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <StatusBadge status={project.publishStatus} publishDate={project.publishDate} />
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3">

@@ -42,8 +42,10 @@ adminArticlesRouter.post("/", async (req, res) => {
       return res.status(400).json({ error: { message: "An article with this slug already exists" } })
     }
 
-    if (data.publishStatus === "published") {
+    if (data.publishStatus === "published" && !data.publishDate) {
       data.publishDate = new Date()
+    } else if (data.publishDate) {
+      data.publishDate = new Date(data.publishDate)
     }
 
     const article = await prisma.article.create({ data })
@@ -83,9 +85,13 @@ adminArticlesRouter.put("/:id", async (req, res) => {
     // Auto-set publishDate if transitioning to published
     if (data.publishStatus === "published") {
       const existing = await prisma.article.findUnique({ where: { id: req.params.id } })
-      if (existing?.publishStatus !== "published") {
+      if (existing?.publishStatus !== "published" && !data.publishDate) {
         data.publishDate = new Date()
+      } else if (data.publishDate) {
+        data.publishDate = new Date(data.publishDate)
       }
+    } else if (data.publishDate) {
+      data.publishDate = new Date(data.publishDate)
     }
     
     // Increment version

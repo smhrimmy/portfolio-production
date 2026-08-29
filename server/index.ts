@@ -125,6 +125,7 @@ app.use("/api/public/theme", publicThemeRouter)
 
 import { adminCronRouter } from "./routes/admin/cron.js"
 import { adminSitesRouter } from "./routes/admin/sites.js"
+import { adminAuditRouter } from "./routes/admin/audit.js"
 
 // Protected Admin Routes
 const adminRouter = express.Router()
@@ -154,6 +155,7 @@ adminRouter.use("/experiments", adminExperimentsRouter)
 adminRouter.use("/analytics", adminAnalyticsRouter)
 adminRouter.use("/theme", adminThemeRouter)
 adminRouter.use("/sites", adminSitesRouter)
+adminRouter.use("/audit", adminAuditRouter)
 
 app.use("/api/admin", adminRouter)
 
