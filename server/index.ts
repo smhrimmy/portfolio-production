@@ -285,7 +285,7 @@ app.post("/api/ai/ask", rateLimiter, async (req, res) => {
   }
 })
 
-if (process.env.NODE_ENV !== "production" || process.env.RUN_LOCAL === "true") {
+if (!process.env.VERCEL) {
   app.listen(port, host, () => {
     console.log(`Portfolio API listening on ${host}:${port}`)
   })
