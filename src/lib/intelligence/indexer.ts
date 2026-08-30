@@ -1,7 +1,7 @@
 import { searchIndex, useIntelligenceStore } from "../../stores/intelligenceStore"
 
 export async function buildLocalIndex(token: string) {
-  const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+  const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
   
   try {
     // We only fetch data to index locally. This is safe and requires no external API keys.

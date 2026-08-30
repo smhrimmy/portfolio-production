@@ -7,7 +7,7 @@ let searchIndexCache: SearchDocument[] | null = null
 export async function buildSearchIndex(): Promise<SearchDocument[]> {
   if (searchIndexCache && publicSearchIndex) return searchIndexCache
 
-  const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+  const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
 
   try {
     const [projectsRes, articlesRes, skillsRes, certsRes] = await Promise.all([

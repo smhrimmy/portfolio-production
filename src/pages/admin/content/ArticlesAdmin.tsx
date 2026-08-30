@@ -51,7 +51,7 @@ export default function ArticlesAdmin() {
 
   const fetchArticles = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/articles`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -68,7 +68,7 @@ export default function ArticlesAdmin() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this article?")) return
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       await fetch(`${apiUrl}/api/admin/articles/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
@@ -110,7 +110,7 @@ export default function ArticlesAdmin() {
 
   const handleSave = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const method = editingArticle ? "PUT" : "POST"
       const url = editingArticle 
         ? `${apiUrl}/api/admin/articles/${editingArticle.id}` 
@@ -149,7 +149,7 @@ export default function ArticlesAdmin() {
     if (!aiPrompt) return toast.error("Please enter a topic")
     setIsGenerating(true)
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/ai/generate-article`, {
         method: "POST",
         headers: {
@@ -185,7 +185,7 @@ export default function ArticlesAdmin() {
     if (!draft.content) return toast.error("Content is empty")
     setIsGenerating(true)
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/ai/seo-assistant`, {
         method: "POST",
         headers: {

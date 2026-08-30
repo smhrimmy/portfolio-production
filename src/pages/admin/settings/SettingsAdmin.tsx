@@ -22,7 +22,7 @@ export default function SettingsAdmin() {
 
   const fetchSettings = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/settings`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -42,7 +42,7 @@ export default function SettingsAdmin() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/settings`, {
         method: "PUT",
         headers: { 

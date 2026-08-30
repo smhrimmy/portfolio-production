@@ -27,7 +27,7 @@ export function AuditTimeline({ entity, entityId, token }: AuditTimelineProps) {
 
   const fetchLogs = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/audit/${entity}/${entityId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })

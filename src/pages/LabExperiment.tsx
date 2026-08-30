@@ -8,7 +8,7 @@ export function LabExperiment() {
   const { slug } = useParams()
   const [experiment, setExperiment] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+  const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
 
   useEffect(() => {
     fetchExperiment()

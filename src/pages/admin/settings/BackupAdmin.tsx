@@ -9,7 +9,7 @@ export default function BackupAdmin() {
 
   const handleExport = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const response = await fetch(`${apiUrl}/api/admin/backup/export`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -41,7 +41,7 @@ export default function BackupAdmin() {
       const text = await file.text()
       const data = JSON.parse(text)
       
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/backup/import`, {
         method: "POST",
         headers: { 

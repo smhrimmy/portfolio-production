@@ -10,7 +10,7 @@ export default function MediaLibrary() {
 
   const fetchMedia = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/media`, {
         headers: { "Authorization": `Bearer ${token}` }
       })
@@ -34,7 +34,7 @@ export default function MediaLibrary() {
     formData.append("file", e.target.files[0])
     
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       const res = await fetch(`${apiUrl}/api/admin/media/upload`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
@@ -58,7 +58,7 @@ export default function MediaLibrary() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this media?")) return
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3001" : "")
+      const apiUrl = (import.meta.env.DEV ? (import.meta.env.VITE_API_URL || "http://localhost:3001") : "")
       await fetch(`${apiUrl}/api/admin/media/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
