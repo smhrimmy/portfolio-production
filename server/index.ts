@@ -13,13 +13,50 @@ import { adminProfileRouter } from "./routes/admin/profile.js"
 
 dotenv.config()
 
-const app = express()
-app.use(cors({
-  origin: function (_origin, callback) {
-    callback(null, true)
+const rawCorsOrigin = process.env.CORS_ORIGIN || ""
+const configuredOrigins = rawCorsOrigin
+  .split(",")
+  .map(o => o.trim())
+  .filter(Boolean)
+  .map(o => (o.startsWith("http://") || o.startsWith("https://") ? o : `https://${o}`))
+
+const corsOptions: cors.CorsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) {
+      return callback(null, true)
+    }
+
+    if (configuredOrigins.length > 0) {
+      if (configuredOrigins.includes("*") || configuredOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+      try {
+        const reqHost = new URL(origin).host
+        const matches = configuredOrigins.some(allowed => {
+          try {
+            return new URL(allowed).host === reqHost
+          } catch {
+            return false
+          }
+        })
+        if (matches) {
+          return callback(null, true)
+        }
+      } catch {
+        // continue to fallback
+      }
+    }
+
+    return callback(null, true)
   },
-  credentials: true
-}))
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+  optionsSuccessStatus: 204,
+}
+
+const app = express()
+app.use(cors(corsOptions))
 app.use(express.json())
 
 const port = Number(process.env.PORT ?? 3001)
